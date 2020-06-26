@@ -40,6 +40,47 @@ you can begin contributing code, documentation or examples to QuTiP.  Please
 stop by to talk to us either in the <a class="reference external" href="https://groups.google.com/forum/#!forum/qutip">QuTiP Google group</a> or in the issues page
 on the <a class="reference external" href="https://github.com/qutip/qutip">main QuTiP repository</a> if you have suggestions for new features, so we
 can discuss the design and suitability with you.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Throughout this document, we will assume that you are using <code class="docutils literal notranslate"><span class="pre">conda</span></code> to
+manage Python environments.  This is not required so long as the general
+principles are followed, but all the examples will use <code class="docutils literal notranslate"><span class="pre">conda</span></code>.</p>
+</div>
+<div class="section" id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<p>To build <code class="docutils literal notranslate"><span class="pre">qutip</span></code> from source and to run the tests, you will need recent
+versions of</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">python</span></code> (at least version 3.5)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">setuptools</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">numpy</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">scipy</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pytest</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Cython</span></code></p></li>
+</ul>
+<p>You will also need a working C++ compiler.  On Linux or Mac, there should
+already be a suitable version of <code class="docutils literal notranslate"><span class="pre">gcc</span></code> or <code class="docutils literal notranslate"><span class="pre">clang</span></code> available, but on Windows
+you will likely need to use a recent version of the Visual Studio compiler.</p>
+<p>You should set up a separate virtual environment to house your development
+version of QuTiP so it does not interfere with any other installation you might
+have.  This can be done with</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="n">qutip</span><span class="o">-</span><span class="n">dev</span> <span class="n">python</span><span class="o">&gt;=</span><span class="mf">3.5</span> <span class="n">setuptools</span> <span class="n">numpy</span> <span class="n">scipy</span> <span class="n">pytest</span> <span class="n">Cython</span>
+</pre></div>
+</div>
+<p>This will create the virtual environment <code class="docutils literal notranslate"><span class="pre">qutip-dev</span></code>, which you can then
+switch to by using <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">activate</span> <span class="pre">qutip-dev</span></code>.  Note that this does <em>not</em>
+install any version of <code class="docutils literal notranslate"><span class="pre">qutip</span></code>, because we will be building that from source.</p>
+</div>
+<div class="section" id="creating-a-fork">
+<h2>Creating a Fork<a class="headerlink" href="#creating-a-fork" title="Permalink to this headline">¶</a></h2>
+<p>At some point you will (hopefully) want to share your changes with us, so you
+should fork the <a class="reference external" href="https://github.com/qutip/qutip">main repository on GitHub</a> into your account, and then clone
+that forked copy.</p>
+<div class="admonition-todo admonition" id="id1">
+<p class="admonition-title">Todo</p>
+<p>Finish this page.</p>
+</div>
+</div>
 </div>
 
 
