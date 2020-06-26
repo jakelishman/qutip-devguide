@@ -5,11 +5,14 @@ release = '5.0.0alpha1'
 
 extensions = [
     'sphinx.ext.intersphinx',
+    'sphinx.ext.todo',
 ]
 
 intersphinx_mapping = {
     'qutip': ('http://qutip.org/docs/latest', None),
 }
+
+todo_include_todos = True
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
