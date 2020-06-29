@@ -25,8 +25,8 @@ data is stored in, as all numerical operations are handed off to the data-layer
 dispatchers, which will ensure the correct specialised methods are called.
 
 Typically these data layer types do not expose buffers to Python-space
-programmes directly, though individual types may have an :meth:`asarray`,
-:meth:`asscipy`, or similar method.  This is for speed and memory-safety.  Once
+programmes directly, though individual types may have an :meth:`as_array`,
+:meth:`as_scipy`, or similar method.  This is for speed and memory-safety.  Once
 Python can access the underlying data buffers directly, all references to them
 must be managed by the garbage collector to ensure that nothing goes stale, even
 if only partial slices onto the data are taken.  To access a copy of the data,

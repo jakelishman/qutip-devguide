@@ -1,6 +1,7 @@
 project = "QuTiP Developers' Guide"
 copyright = '2020, QuTiP developers'
 author = 'Jake Lishman'
+version = '5.0'
 release = '5.0.0alpha1'
 
 extensions = [
@@ -11,7 +12,9 @@ extensions = [
 intersphinx_mapping = {
     'qutip': ('http://qutip.org/docs/latest/', None),
     'python': ('https://docs.python.org/3', None),
-    'np': ('https://numpy.org/doc/stable/', None),
+    'numpy': ('https://numpy.org/doc/stable/', None),
+    'scipy': ('https://docs.scipy.org/doc/scipy/reference/', None),
+    'cython': ('https://cython.readthedocs.io/en/latest/', None),
 }
 
 todo_include_todos = True
