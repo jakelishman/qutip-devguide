@@ -13,9 +13,10 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Getting Started" href="getting-started.html" />
+    <link rel="next" title="Preparing a Development Environment" href="development-environment.html" />
     <link rel="prev" title="QuTiP Developers’ Guide" href="../index.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -40,14 +41,28 @@ source code is available in the <a class="reference external" href="https://gith
 primary location for filing issues and making pull requests.  Please read these
 pages to help you understand how the <code class="docutils literal notranslate"><span class="pre">qutip</span></code> package is organised and how the
 code works.</p>
+<p>In general we assume that you have a working knowledge of using QuTiP as a user,
+and these pages will not contain a tutorial on how to work with the library.  If
+that is what you are looking for, please refer to the <a class="reference external" href="http://qutip.org/docs/latest/">user guide</a> or the large
+collection of <a class="reference external" href="http://qutip.org/tutorials.html">example notebooks</a>.</p>
+<p>This developers’ guide is intended for people who are looking to modify and
+extend QuTiP, particularly the lower-level, more heavily optimised components.</p>
 <div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Contents:</span></p>
+<p class="caption"><span class="caption-text">Guide Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting Started</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="getting-started.html#requirements">Requirements</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getting-started.html#creating-a-fork">Creating a Fork</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development-environment.html">Preparing a Development Environment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="development-environment.html#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development-environment.html#creating-a-fork">Creating a Fork</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="quantum-objects.html">Quantum Objects</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="quantum-objects.html#data-store">Data Store</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quantum-objects.html#auxiliary-information">Auxiliary Information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quantum-objects.html#methods">Methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quantum-objects.html#derived-and-related-types">Derived and Related Types</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="data-layer.html">Data Layer</a></li>
 </ul>
 </div>
 </div>
@@ -71,7 +86,9 @@ code works.</p>
 <h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">QuTiP Package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="getting-started.html">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development-environment.html">Preparing a Development Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quantum-objects.html">Quantum Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data-layer.html">Data Layer</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../docs/index.html">Documentation</a></li>
@@ -83,7 +100,7 @@ code works.</p>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
       <li>Previous: <a href="../index.html" title="previous chapter">QuTiP Developers’ Guide</a></li>
-      <li>Next: <a href="getting-started.html" title="next chapter">Getting Started</a></li>
+      <li>Next: <a href="development-environment.html" title="next chapter">Preparing a Development Environment</a></li>
   </ul></li>
 </ul>
 </div>

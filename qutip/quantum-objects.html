@@ -1,0 +1,233 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Objects &#8212; QuTiP Developers&#39; Guide 5.0.0alpha1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Core Package Classes" href="data-layer.html" />
+    <link rel="prev" title="Preparing a Development Environment" href="development-environment.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="quantum-objects">
+<h1>Quantum Objects<a class="headerlink" href="#quantum-objects" title="Permalink to this headline">¶</a></h1>
+<p>The primary user-facing type is <a class="reference external" href="http://qutip.org/docs/latest/apidoc/classes.html#qutip.Qobj" title="(in QuTiP: Quantum Toolbox in Python v4.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Qobj</span></code></a>, which all users will have
+interacted with as it represents any quantum object in QuTiP.
+<a class="reference external" href="http://qutip.org/docs/latest/apidoc/classes.html#qutip.Qobj" title="(in QuTiP: Quantum Toolbox in Python v4.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Qobj</span></code></a> consists of two major components: the underlying data
+representation of the object, and information about what object is being
+represented.  In fact, <a class="reference external" href="http://qutip.org/docs/latest/apidoc/classes.html#qutip.Qobj" title="(in QuTiP: Quantum Toolbox in Python v4.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Qobj</span></code></a> itself is only really responsible for
+managing this “auxiliary” information, ensuring that all mathematical operations
+on the data make sense, and neatly wrapping the data-layer functions to be more
+convenient for the user.  All the numeric heavy lifting is handled by the data
+layer.</p>
+<div class="section" id="data-store">
+<h2>Data Store<a class="headerlink" href="#data-store" title="Permalink to this headline">¶</a></h2>
+<p>The data is actually stored in the <code class="xref py py-attr docutils literal notranslate"><span class="pre">data</span></code> attribute of a
+<a class="reference external" href="http://qutip.org/docs/latest/apidoc/classes.html#qutip.Qobj" title="(in QuTiP: Quantum Toolbox in Python v4.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Qobj</span></code></a>.  This is always a “data-layer type”, which will be covered
+in more detail in the coming sections.  The different available types store the
+data in different manners, such as full two-dimensional dense matrices (like
+NumPy arrays) or compressed sparse matrix formats, as different formats have
+different advantages.  <a class="reference external" href="http://qutip.org/docs/latest/apidoc/classes.html#qutip.Qobj" title="(in QuTiP: Quantum Toolbox in Python v4.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Qobj</span></code></a> in general does not care what form its
+data is stored in, as all numerical operations are handed off to the data-layer
+dispatchers, which will ensure the correct specialised methods are called.</p>
+<p>Typically these data layer types do not expose buffers to Python-space
+programmes directly, though individual types may have an <code class="xref py py-meth docutils literal notranslate"><span class="pre">asarray()</span></code>,
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">asscipy()</span></code>, or similar method.  This is for speed and memory-safety.  Once
+Python can access the underlying data buffers directly, all references to them
+must be managed by the garbage collector to ensure that nothing goes stale, even
+if only partial slices onto the data are taken.  To access a copy of the data,
+<a class="reference external" href="http://qutip.org/docs/latest/apidoc/classes.html#qutip.Qobj" title="(in QuTiP: Quantum Toolbox in Python v4.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Qobj</span></code></a> exposes the <a class="reference external" href="http://qutip.org/docs/latest/apidoc/classes.html#qutip.Qobj.full" title="(in QuTiP: Quantum Toolbox in Python v4.5)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">full()</span></code></a> method, which will
+always return a two-dimensional <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>.  If your object is too
+large to reasonably have a dense-matrix representation, you will need to use the
+specific methods on the data-layer type that is used.</p>
+<p>The amount of information guaranteed to be stored by data-layer types is very
+small—sufficient to know whether a linear algebra operation <em>can</em> take place.
+This is currently just the shape of the data being represented; there is no
+information on Hilbert space (tensor product) dimensions, what type of object
+the data represents, or anything else.  This is all managed by
+<a class="reference external" href="http://qutip.org/docs/latest/apidoc/classes.html#qutip.Qobj" title="(in QuTiP: Quantum Toolbox in Python v4.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Qobj</span></code></a>.</p>
+</div>
+<div class="section" id="auxiliary-information">
+<h2>Auxiliary Information<a class="headerlink" href="#auxiliary-information" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="http://qutip.org/docs/latest/apidoc/classes.html#qutip.Qobj" title="(in QuTiP: Quantum Toolbox in Python v4.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Qobj</span></code></a> contains several pieces of auxiliary information about the
+object being represented.  The major parts are:</p>
+<dl class="simple">
+<dt><code class="xref py py-attr docutils literal notranslate"><span class="pre">qutip.Qobj.dims</span></code></dt><dd><p>The tensor-product structure that this quantum object lives in.  This is a
+list of two elements—the “left” dimensions and the “right” dimensions.  For
+example, an operator on a Hilbert space formed of two qubits has
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">dims</span></code> of <code class="docutils literal notranslate"><span class="pre">[[2,</span> <span class="pre">2],</span> <span class="pre">[2,</span> <span class="pre">2]]</span></code>.  A state (a “ket”) in the
+same space has dimensions of <code class="docutils literal notranslate"><span class="pre">[[2,</span> <span class="pre">2],</span> <span class="pre">[1,</span> <span class="pre">1]]</span></code>.  The data structure
+storing these two objects would not keep this information; the
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">shape</span></code> attributes would respectively be simply
+<code class="docutils literal notranslate"><span class="pre">(4,</span> <span class="pre">4)</span></code> and <code class="docutils literal notranslate"><span class="pre">(4,</span> <span class="pre">1)</span></code>.</p>
+</dd>
+<dt><code class="xref py py-attr docutils literal notranslate"><span class="pre">qutip.Qobj.type</span></code></dt><dd><p>The type of object represented by this <a class="reference external" href="http://qutip.org/docs/latest/apidoc/classes.html#qutip.Qobj" title="(in QuTiP: Quantum Toolbox in Python v4.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Qobj</span></code></a>.  This is typically
+derived from <code class="xref py py-attr docutils literal notranslate"><span class="pre">dims</span></code>.  This is a string, containing a
+human-readable description of what type the object is, such as <code class="docutils literal notranslate"><span class="pre">&quot;oper&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;ket&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;bra&quot;</span></code>.</p>
+</dd>
+<dt><code class="xref py py-attr docutils literal notranslate"><span class="pre">qutip.Qobj.superrep</span></code></dt><dd><p>If this object is a super-operator, then this attribute is a string
+describing the particular representation used, such as the default
+<code class="docutils literal notranslate"><span class="pre">&quot;super&quot;</span></code> or something more specific like <code class="docutils literal notranslate"><span class="pre">&quot;choi&quot;</span></code>.</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<p>As <a class="reference external" href="http://qutip.org/docs/latest/apidoc/classes.html#qutip.Qobj" title="(in QuTiP: Quantum Toolbox in Python v4.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Qobj</span></code></a> is the primary Python user-facing type, it provides all
+the Python niceties and “magic” methods, such as <code class="xref py py-meth docutils literal notranslate"><span class="pre">__add__()</span></code>,
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">__mul__()</span></code> and so forth.  <a class="reference external" href="http://qutip.org/docs/latest/apidoc/classes.html#qutip.Qobj" title="(in QuTiP: Quantum Toolbox in Python v4.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Qobj</span></code></a> will check that
+the operation makes sense, returning <a class="reference external" href="https://docs.python.org/3/library/constants.html#NotImplemented" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">NotImplemented</span></code></a> on failure, but a
+successful output will typically require passing off to the data layer.  The
+data layer types themselves generally do <em>not</em> have these magic methods, as they
+are not designed to be manipulated by user code in Python.</p>
+<p>In addition to the operator-overloading methods, <a class="reference external" href="http://qutip.org/docs/latest/apidoc/classes.html#qutip.Qobj" title="(in QuTiP: Quantum Toolbox in Python v4.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Qobj</span></code></a> also
+provides many quantum-specific mathematical operations, such as
+<a class="reference external" href="http://qutip.org/docs/latest/apidoc/classes.html#qutip.Qobj.dag" title="(in QuTiP: Quantum Toolbox in Python v4.5)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">dag()</span></code></a>, <a class="reference external" href="http://qutip.org/docs/latest/apidoc/classes.html#qutip.Qobj.norm" title="(in QuTiP: Quantum Toolbox in Python v4.5)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">norm()</span></code></a>, <a class="reference external" href="http://qutip.org/docs/latest/apidoc/classes.html#qutip.Qobj.proj" title="(in QuTiP: Quantum Toolbox in Python v4.5)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">proj()</span></code></a> and
+<a class="reference external" href="http://qutip.org/docs/latest/apidoc/classes.html#qutip.Qobj.eigenstates" title="(in QuTiP: Quantum Toolbox in Python v4.5)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">eigenstates()</span></code></a>.  Typically these are pass-throughs to the data
+layer, as <a class="reference external" href="http://qutip.org/docs/latest/apidoc/classes.html#qutip.Qobj" title="(in QuTiP: Quantum Toolbox in Python v4.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Qobj</span></code></a> accesses its own data using the abstract interface
+defined there.</p>
+<p><a class="reference external" href="http://qutip.org/docs/latest/apidoc/classes.html#qutip.Qobj" title="(in QuTiP: Quantum Toolbox in Python v4.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Qobj</span></code></a> adds in its own <code class="xref py py-meth docutils literal notranslate"><span class="pre">__repr__()</span></code> methods for nice
+output in REPLs, and includes IPython and Jupyter integration.  When running in
+a rich environment, the <code class="xref py py-meth docutils literal notranslate"><span class="pre">_repr_latex_()</span></code> method will be called
+to better format the output.</p>
+</div>
+<div class="section" id="derived-and-related-types">
+<h2>Derived and Related Types<a class="headerlink" href="#derived-and-related-types" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="http://qutip.org/docs/latest/apidoc/classes.html#qutip.Qobj" title="(in QuTiP: Quantum Toolbox in Python v4.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Qobj</span></code></a> is not the only type representing quantum objects in QuTiP,
+but it is by far the most common from the user’s perspective.  Sometimes, for
+efficiency, other classes are necessary which either derive from or wrap
+<a class="reference external" href="http://qutip.org/docs/latest/apidoc/classes.html#qutip.Qobj" title="(in QuTiP: Quantum Toolbox in Python v4.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Qobj</span></code></a>.  These are often more specialised, and used only in some
+parts of the code base.</p>
+<div class="section" id="qobjevo">
+<h3>QobjEvo<a class="headerlink" href="#qobjevo" title="Permalink to this headline">¶</a></h3>
+<p>The most wide-spread of these related types is <a class="reference external" href="http://qutip.org/docs/latest/apidoc/classes.html#qutip.QobjEvo" title="(in QuTiP: Quantum Toolbox in Python v4.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">QobjEvo</span></code></a>, which
+represents a time-dependent quantum objects.  Essentially, it represents an
+object <span class="math notranslate nohighlight">\(A(t)\)</span> which can be described by</p>
+<div class="math notranslate nohighlight">
+\[A(t) = \sum_k f_k(t) A_k\]</div>
+<p>for some scalar, time-dependent functions <span class="math notranslate nohighlight">\(f_k(t)\)</span> and some time-<em>independent</em> quantum objects in compatible Hilbert spaces <span class="math notranslate nohighlight">\(A_k\)</span> quantum
+objects in compatible Hilbert spaces <span class="math notranslate nohighlight">\(A_k\)</span>.  These <span class="math notranslate nohighlight">\(A_k\)</span> will be
+instances of <a class="reference external" href="http://qutip.org/docs/latest/apidoc/classes.html#qutip.Qobj" title="(in QuTiP: Quantum Toolbox in Python v4.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Qobj</span></code></a>.</p>
+<p>This class is mostly for usage in solvers and optimisers which work on
+time-dependent objects, as it can transpile the scalar time-dependence down to
+C code and compile this to run natively.  The classes may be instantiated
+directly by users when they want to reuse the results of compilation, as this
+process typically takes several seconds.</p>
+<p><a class="reference external" href="http://qutip.org/docs/latest/apidoc/classes.html#qutip.QobjEvo" title="(in QuTiP: Quantum Toolbox in Python v4.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">QobjEvo</span></code></a> does not store its own data, but uses the underlying
+<a class="reference external" href="http://qutip.org/docs/latest/apidoc/classes.html#qutip.Qobj" title="(in QuTiP: Quantum Toolbox in Python v4.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Qobj</span></code></a> instances until its <code class="xref py py-meth docutils literal notranslate"><span class="pre">compile()</span></code> method is
+called.  This method produces a C extension type <code class="xref py py-obj docutils literal notranslate"><span class="pre">CQobjEvo</span></code>, which
+<em>does</em> store its own data.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">QuTiP Developers' Guide</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">QuTiP Package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="development-environment.html">Preparing a Development Environment</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Quantum Objects</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#data-store">Data Store</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#auxiliary-information">Auxiliary Information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#methods">Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#derived-and-related-types">Derived and Related Types</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="data-layer.html">Core Package Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../docs/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/index.html">Example Notebooks</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">QuTiP Package</a><ul>
+      <li>Previous: <a href="development-environment.html" title="previous chapter">Preparing a Development Environment</a></li>
+      <li>Next: <a href="data-layer.html" title="next chapter">Core Package Classes</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, QuTiP developers.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/qutip/quantum-objects.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
