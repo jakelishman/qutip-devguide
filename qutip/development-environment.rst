@@ -1,5 +1,5 @@
-Getting Started
-###############
+Preparing a Development Environment
+###################################
 
 This page describes how to get a QuTiP development environment set up so that
 you can begin contributing code, documentation or examples to QuTiP.  Please
@@ -22,7 +22,7 @@ Requirements
 To build ``qutip`` from source and to run the tests, you will need recent
 versions of
 
-- ``python`` (at least version 3.5)
+- ``python`` (at least version 3.6)
 - ``setuptools``
 - ``numpy``
 - ``scipy``
@@ -37,7 +37,7 @@ You should set up a separate virtual environment to house your development
 version of QuTiP so it does not interfere with any other installation you might
 have.  This can be done with ::
 
-   conda create -n qutip-dev python>=3.5 setuptools numpy scipy pytest Cython
+   conda create -n qutip-dev python>=3.6 setuptools numpy scipy pytest Cython
 
 This will create the virtual environment ``qutip-dev``, which you can then
 switch to by using ``conda activate qutip-dev``.  Note that this does *not*
@@ -49,7 +49,9 @@ Creating a Fork
 
 At some point you will (hopefully) want to share your changes with us, so you
 should fork the `main repository on GitHub`_ into your account, and then clone
-that forked copy.
+that forked copy.  If you do not create a fork on GitHub, you will be able to
+read and install QuTiP, but you will not be able to push any changes you make
+back to GitHub so you can share them with us.
 
 .. _main repository on GitHub: https://github.com/qutip/qutip
 

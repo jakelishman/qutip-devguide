@@ -9,7 +9,9 @@ extensions = [
 ]
 
 intersphinx_mapping = {
-    'qutip': ('http://qutip.org/docs/latest', None),
+    'qutip': ('http://qutip.org/docs/latest/', None),
+    'python': ('https://docs.python.org/3', None),
+    'np': ('https://numpy.org/doc/stable/', None),
 }
 
 todo_include_todos = True
