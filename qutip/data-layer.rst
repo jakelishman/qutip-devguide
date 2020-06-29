@@ -207,4 +207,4 @@ Dense: :obj:`~qutip.core.data.Dense`
 ------------------------------------
 
 .. todo::
-   Add some information about this.
+   Add some information about this class.
