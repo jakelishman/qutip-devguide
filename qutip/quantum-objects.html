@@ -60,6 +60,10 @@
           
             
             
+              <div class="version">
+                5.0
+              </div>
+            
           
 
           
@@ -187,8 +191,8 @@ different advantages.  <a class="reference external" href="http://qutip.org/docs
 data is stored in, as all numerical operations are handed off to the data-layer
 dispatchers, which will ensure the correct specialised methods are called.</p>
 <p>Typically these data layer types do not expose buffers to Python-space
-programmes directly, though individual types may have an <code class="xref py py-meth docutils literal notranslate"><span class="pre">asarray()</span></code>,
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">asscipy()</span></code>, or similar method.  This is for speed and memory-safety.  Once
+programmes directly, though individual types may have an <code class="xref py py-meth docutils literal notranslate"><span class="pre">as_array()</span></code>,
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">as_scipy()</span></code>, or similar method.  This is for speed and memory-safety.  Once
 Python can access the underlying data buffers directly, all references to them
 must be managed by the garbage collector to ensure that nothing goes stale, even
 if only partial slices onto the data are taken.  To access a copy of the data,
