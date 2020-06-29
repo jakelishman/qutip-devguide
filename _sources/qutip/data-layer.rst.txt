@@ -47,7 +47,7 @@ reasons for not wanting to use SciPy's implementation:
 
 Older versions of QuTiP used to reduce these issues by using a
 :class:`fast_csr_matrix` type which derived from
-:obj:`~scipy.sparse.csr_matrix` and overrode its :meth:`__init__` method to
+:obj:`~scipy.sparse.csr_matrix` and overrode its :meth:`!__init__` method to
 remove the slow index-checking code and ensured that only data of the correct
 types was stored.  In C-level code, a secondary struct :c:struct:`CSR_Matrix`
 was defined, which led to various parts of the code have several entry points,
@@ -145,7 +145,7 @@ will be discussed in the next section.
 
 The problem of :obj:`~scipy.sparse.csr_matrix` having a slow constructor still
 persists, however.  We do not want to have to define a whole new derived class
-(like the old :class:`fast_csr_matrix`) just to override :meth:`__init__`,
+(like the old :class:`fast_csr_matrix`) just to override :meth:`!__init__`,
 mostly because it's unnecessary and bloats our own code, but it also may have
 annoying knock-on effects for users with imperfect polymorphic code and it adds
 overhead to method resolution.  Instead, we simply allocate space for a
@@ -182,7 +182,7 @@ space.  In these cases, we must ensure that the data buffer cannot be freed
 while the user holds a reference to it.  We allow the user to use the
 :meth:`~qutip.core.data.CSR.as_scipy` method to view the data, and as part of
 this process, we create new a :obj:`~numpy.ndarray` for each buffer, and set
-the :c:var:`NPY_ARRAY_OWNDATA` flag to force NumPy to manage reference
+the :c:data:`NPY_ARRAY_OWNDATA` flag to force NumPy to manage reference
 counting for us.
 
 Since we have just passed on ownership of our data to another entity, we always
@@ -198,7 +198,7 @@ It is important when allocating buffers which may become the backing of a
 otherwise may cause segfaults or other complete interpreter crashes, as it may
 not use the same allocator that NumPy does.  In particular, the Windows runtime
 can easily result in this happening if raw ``malloc`` or ``calloc`` are used,
-and the CPython allocator :c:func:`cpython.mem.PyMem_Malloc` will tend to
+and the CPython allocator :c:func:`!cpython.mem.PyMem_Malloc` will tend to
 allocate small requests into an internal reserved buffer on its stack, which
 cannot be freed from NumPy.
 

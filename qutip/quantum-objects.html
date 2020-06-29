@@ -197,7 +197,7 @@ Python can access the underlying data buffers directly, all references to them
 must be managed by the garbage collector to ensure that nothing goes stale, even
 if only partial slices onto the data are taken.  To access a copy of the data,
 <a class="reference external" href="http://qutip.org/docs/latest/apidoc/classes.html#qutip.Qobj" title="(in QuTiP: Quantum Toolbox in Python v4.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Qobj</span></code></a> exposes the <a class="reference external" href="http://qutip.org/docs/latest/apidoc/classes.html#qutip.Qobj.full" title="(in QuTiP: Quantum Toolbox in Python v4.5)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">full()</span></code></a> method, which will
-always return a two-dimensional <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>.  If your object is too
+always return a two-dimensional <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>.  If your object is too
 large to reasonably have a dense-matrix representation, you will need to use the
 specific methods on the data-layer type that is used.</p>
 <p>The amount of information guaranteed to be stored by data-layer types is very

@@ -194,7 +194,7 @@ in fact can be directly viewed as one using its
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">as_array()</span></code> method), but is guaranteed to hold
 exactly two dimensions, of which one is stored contiguously.  These additional
 internal guarantees help speed in the tightest loops, and the type can be
-constructed very quickly from an <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code></a> that is already in the
+constructed very quickly from an <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code></a> that is already in the
 correct format.</p>
 <p>For the large number of cases where the underlying data is much sparser, we use
 the <code class="xref py py-obj docutils literal notranslate"><span class="pre">qutip.core.data.CSR</span></code> type, which is a form of compressed sparse row
@@ -323,8 +323,8 @@ like this, and simply do not permit references in this manner within our code.</
 space.  In these cases, we must ensure that the data buffer cannot be freed
 while the user holds a reference to it.  We allow the user to use the
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">as_scipy()</span></code> method to view the data, and as part of
-this process, we create new a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code></a> for each buffer, and set
-the <code class="xref c c-var docutils literal notranslate"><span class="pre">NPY_ARRAY_OWNDATA</span></code> flag to force NumPy to manage reference
+this process, we create new a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code></a> for each buffer, and set
+the <a class="reference external" href="https://numpy.org/doc/stable/reference/c-api/array.html#c.NPY_ARRAY_OWNDATA" title="(in NumPy v1.19)"><code class="xref c c-data docutils literal notranslate"><span class="pre">NPY_ARRAY_OWNDATA</span></code></a> flag to force NumPy to manage reference
 counting for us.</p>
 <p>Since we have just passed on ownership of our data to another entity, we always
 keep a (strong) reference to the created object within our own type.  This was
@@ -333,8 +333,8 @@ with it, and NumPy’s memory management will also ensure that the memory <em>is
 deallocated safely once all Python views onto it are gone.</p>
 <p>It is important when allocating buffers which may become the backing of a
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">CSR</span></code> type that you <em>always</em> use
-<a class="reference external" href="https://numpy.org/doc/stable/reference/c-api/array.html#c.PyDataMem_NEW" title="(in NumPy v1.18)"><code class="xref c c-func docutils literal notranslate"><span class="pre">PyDataMem_NEW()</span></code></a> (or others in the <code class="docutils literal notranslate"><span class="pre">PyDataMem</span></code> family) and
-<a class="reference external" href="https://numpy.org/doc/stable/reference/c-api/array.html#c.PyDataMem_FREE" title="(in NumPy v1.18)"><code class="xref c c-func docutils literal notranslate"><span class="pre">PyDataMem_FREE()</span></code></a> to allocate and free memory.  Doing
+<a class="reference external" href="https://numpy.org/doc/stable/reference/c-api/array.html#c.PyDataMem_NEW" title="(in NumPy v1.19)"><code class="xref c c-func docutils literal notranslate"><span class="pre">PyDataMem_NEW()</span></code></a> (or others in the <code class="docutils literal notranslate"><span class="pre">PyDataMem</span></code> family) and
+<a class="reference external" href="https://numpy.org/doc/stable/reference/c-api/array.html#c.PyDataMem_FREE" title="(in NumPy v1.19)"><code class="xref c c-func docutils literal notranslate"><span class="pre">PyDataMem_FREE()</span></code></a> to allocate and free memory.  Doing
 otherwise may cause segfaults or other complete interpreter crashes, as it may
 not use the same allocator that NumPy does.  In particular, the Windows runtime
 can easily result in this happening if raw <code class="docutils literal notranslate"><span class="pre">malloc</span></code> or <code class="docutils literal notranslate"><span class="pre">calloc</span></code> are used,
