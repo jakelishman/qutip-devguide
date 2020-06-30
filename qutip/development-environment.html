@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Preparing a Development Environment &mdash; QuTiP Developers&#39; Guide 5.0.0alpha1 documentation</title>
+  <title>Creating a Development Environment &mdash; QuTiP Developers&#39; Guide 5.0.0alpha1 documentation</title>
   
 
   
@@ -87,9 +87,11 @@
             
               <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">QuTiP Package</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Preparing a Development Environment</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Creating a Development Environment</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#requirements">Requirements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#creating-a-local-copy">Creating a Local Copy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#building-from-source">Building From Source</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#contributing-code">Contributing Code</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="quantum-objects.html">Quantum Objects</a></li>
@@ -145,7 +147,7 @@
         
           <li><a href="index.html">QuTiP Package</a> &raquo;</li>
         
-      <li>Preparing a Development Environment</li>
+      <li>Creating a Development Environment</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -164,19 +166,18 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="preparing-a-development-environment">
-<h1>Preparing a Development Environment<a class="headerlink" href="#preparing-a-development-environment" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="creating-a-development-environment">
+<h1>Creating a Development Environment<a class="headerlink" href="#creating-a-development-environment" title="Permalink to this headline">¶</a></h1>
 <p>This page describes how to get a QuTiP development environment set up so that
 you can begin contributing code, documentation or examples to QuTiP.  Please
 stop by to talk to us either in the <a class="reference external" href="https://groups.google.com/forum/#!forum/qutip">QuTiP Google group</a> or in the issues page
 on the <a class="reference external" href="https://github.com/qutip/qutip">main QuTiP repository</a> if you have suggestions for new features, so we
 can discuss the design and suitability with you.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Throughout this document, we will assume that you are using <code class="docutils literal notranslate"><span class="pre">conda</span></code> to
-manage Python environments.  This is not required so long as the general
-principles are followed, but all the examples will use <code class="docutils literal notranslate"><span class="pre">conda</span></code>.</p>
-</div>
+<p>To contribute to QuTiP development, you will need to have a working knowledge of
+<code class="docutils literal notranslate"><span class="pre">git</span></code>.  If you’re not familiar with it, you can read <a class="reference external" href="https://guides.github.com/introduction/git-handbook">GitHub’s simple
+introduction</a> or look at the official
+<a class="reference external" href="https://git-scm.com/book/en">Git book</a> which also has the basics, but
+then goes into much more detail if you’re interested.</p>
 <div class="section" id="requirements">
 <h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
 <p>To build <code class="docutils literal notranslate"><span class="pre">qutip</span></code> from source and to run the tests, you will need recent
@@ -201,22 +202,131 @@ have.  This can be done with</p>
 <p>This will create the virtual environment <code class="docutils literal notranslate"><span class="pre">qutip-dev</span></code>, which you can then
 switch to by using <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">activate</span> <span class="pre">qutip-dev</span></code>.  Note that this does <em>not</em>
 install any version of <code class="docutils literal notranslate"><span class="pre">qutip</span></code>, because we will be building that from source.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You do not need to use <code class="docutils literal notranslate"><span class="pre">conda</span></code>—any suitable virtual environment manager
+should work just fine.</p>
+</div>
 </div>
 <div class="section" id="creating-a-local-copy">
 <h2>Creating a Local Copy<a class="headerlink" href="#creating-a-local-copy" title="Permalink to this headline">¶</a></h2>
 <p>At some point you will (hopefully) want to share your changes with us, so you
-should fork the <a class="reference external" href="https://github.com/qutip/qutip">main repository on GitHub</a> into your account, and then clone
+should fork the main repository on GitHub into your account, and then clone
 that forked copy.  If you do not create a fork on GitHub, you will be able to
 read and install QuTiP, but you will not be able to push any changes you make
 back to GitHub so you can share them with us.</p>
 <p>To create a fork, go to the relevant repository’s page on GitHub (for example,
-the main QuTiP repository is <a href="#id2"><span class="problematic" id="id3">`https://github.com/qutip/qutip`_</span></a></p>
-<p>There is more than one repository in the QuTiP organisation which may need to be
-updated with any change, so for local bookkeeping you may want to</p>
-<div class="admonition-todo admonition" id="id1">
-<p class="admonition-title">Todo</p>
-<p>Finish this page.</p>
+the main QuTiP repository is
+<a class="reference external" href="https://github.com/qutip/qutip">qutip/qutip on GitHub</a>), and click the fork
+button in the top right.  This will create a linked version of the repository in
+your own GitHub account.  GitHub also has <cite>its own documentation on forking
+&lt;https://guides.github.com/activies/forking&gt;</cite>.</p>
+<p>You can now “clone” your fork onto your local computer.  The command will look
+something like</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/&lt;</span><span class="n">user</span><span class="o">&gt;/</span><span class="n">qutip</span>
+</pre></div>
 </div>
+<p>where <code class="docutils literal notranslate"><span class="pre">&lt;user&gt;</span></code> is your GitHub username (i.e. <em>not</em> <code class="docutils literal notranslate"><span class="pre">qutip</span></code>).  This will
+create a folder in your current directory called <code class="docutils literal notranslate"><span class="pre">qutip</span></code> which contains the
+repository.  This is your <em>local copy</em>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You can put your local copy wherever you like, and call the top-level
+directory whatever you like, including moving and renaming it after the
+<code class="docutils literal notranslate"><span class="pre">clone</span></code> operation.  As there is more than one QuTiP organisation
+repository, you may find it convenient to have <code class="docutils literal notranslate"><span class="pre">qutip</span></code>, <code class="docutils literal notranslate"><span class="pre">docs</span></code> and
+<code class="docutils literal notranslate"><span class="pre">notebooks</span></code> all in a containing folder called <code class="docutils literal notranslate"><span class="pre">qutip</span></code>.</p>
+</div>
+</div>
+<div class="section" id="building-from-source">
+<h2>Building From Source<a class="headerlink" href="#building-from-source" title="Permalink to this headline">¶</a></h2>
+<p>Make sure you have activated your QuTiP development virtual environment that you
+set up earlier.  You should not have any version of QuTiP installed here.  If
+you are in the root of the <code class="docutils literal notranslate"><span class="pre">qutip</span></code> repository (you should see the file
+<code class="docutils literal notranslate"><span class="pre">setup.py</span></code>), then the command to build is</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">develop</span>
+</pre></div>
+</div>
+<p>If you need to test OpenMP support, add the flag <code class="docutils literal notranslate"><span class="pre">--with-openmp</span></code> to the end of
+the command.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">develop</span></code> target for
+<a class="reference external" href="https://setuptools.readthedocs.io/en/latest/">setuptools</a> will compile and
+link all of the Cython extensions, package the resulting files into an egg, and
+add the package to the Python search path.  After you have done this, you should
+be able to <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">qutip</span></code> from anywhere as long as you have this development
+environment active, and you will get your development environment.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In general, you do not need to re-run <code class="docutils literal notranslate"><span class="pre">setup.py</span></code> if you only make changes
+to the Python files.  These changes should appear immediately, when you
+re-import <code class="docutils literal notranslate"><span class="pre">qutip</span></code> albeit with the standard Python proviso that you may need
+to re-open the Python interpreter or use <a class="reference external" href="https://docs.python.org/3/library/importlib.html#importlib.reload" title="(in Python v3.8)"><code class="xref py py-func docutils literal notranslate"><span class="pre">importlib.reload()</span></code></a> to clear
+the package cache.</p>
+<p>If you make changes to any Cython files, you <em>must</em>
+re-run <code class="docutils literal notranslate"><span class="pre">setup.py</span> <span class="pre">develop</span></code> in the same manner, or your extensions will not
+be built.</p>
+</div>
+<p>You should now be able to run the tests.  From the root of the repository, or
+inside <code class="docutils literal notranslate"><span class="pre">qutip</span></code> or <code class="docutils literal notranslate"><span class="pre">qutip/tests</span></code>, you can simply run <code class="docutils literal notranslate"><span class="pre">pytest</span></code> to run
+everything.  The full test suite will take about 20–30 minutes, depending on
+your computer.  You can test specific files by passing them as arguments to
+<code class="docutils literal notranslate"><span class="pre">pytest</span></code>, or you can use the <code class="docutils literal notranslate"><span class="pre">-m</span> <span class="pre">&quot;not</span> <span class="pre">slow&quot;</span></code> argument to disable some of the
+slowest tests.</p>
+</div>
+<div class="section" id="contributing-code">
+<h2>Contributing Code<a class="headerlink" href="#contributing-code" title="Permalink to this headline">¶</a></h2>
+<p>QuTiP development follows the “GitHub Flow” pattern of using Git.  This is a
+simple triangular workflow, and you have already done the first step by creating
+a fork.  In general, the process for contributing code follows a short list of
+steps:</p>
+<ol class="arabic simple">
+<li><p>Fetch changes from the QuTiP organisation’s copy</p></li>
+<li><p>Create a new branch for your changes</p></li>
+<li><p>Add commits with your changes to your new branch</p></li>
+<li><p>Push your branch to your fork on GitHub</p></li>
+<li><p>Make a pull request (PR) to the QuTiP repository</p></li>
+</ol>
+<p>You can read more documentation about this pattern in the
+<a class="reference external" href="https::guides.github.com/introduction/flow">GitHub guide to Flow</a>, and see
+<a class="reference external" href="https://github.blog/2015-07-29-git-2-5-including-multiple-worktrees-and-triangular-workflows/#improved-support-for-triangular-workflows">the GitHub blog post</a>
+about when the Git tool added greater support for this type of triangular work.</p>
+<p>While using this pattern, you should keep your <code class="docutils literal notranslate"><span class="pre">master</span></code> branch looking the
+same as ours, or at least you should not add any commits to it that we do not
+have.  Always use topic branches, and do not merge them directly into
+<code class="docutils literal notranslate"><span class="pre">master</span></code>.  Wait until your PR has been accepted and merged into our version,
+then pull down the changes into your <code class="docutils literal notranslate"><span class="pre">master</span></code> branch.</p>
+<p>To fetch changes from our copy, you will need to add our version (the repository
+that you clicked “Fork” on) as a Git remote.  The base command is</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">remote</span> <span class="n">add</span> <span class="n">upstream</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">qutip</span><span class="o">/</span><span class="n">qutip</span>
+</pre></div>
+</div>
+<p>This will add a remote called <code class="docutils literal notranslate"><span class="pre">upstream</span></code> to your local copy.  You will not
+have write access to this, so you will not be able to push to it.  You will,
+however, be able to fetch from it.  While on <code class="docutils literal notranslate"><span class="pre">master</span></code>, do</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">pull</span> <span class="n">upstream</span> <span class="n">master</span>
+</pre></div>
+</div>
+<p>Unless you have made changes to your own version of <code class="docutils literal notranslate"><span class="pre">master</span></code>, this will bring
+you up-to-speed with ours.  To create and swap to a new branch to work on, use</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">checkout</span> <span class="o">-</span><span class="n">b</span> <span class="o">&lt;</span><span class="n">branchname</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>You can then swap branches by using <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">checkout</span> <span class="pre">&lt;branchname&gt;</span></code> without the
+<code class="docutils literal notranslate"><span class="pre">-b</span></code> option.  To add commits to a branch, make the changes you want to make,
+then call</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">add</span> <span class="o">&lt;</span><span class="n">file1</span><span class="o">&gt;</span> <span class="p">[</span><span class="o">&lt;</span><span class="n">file2</span><span class="o">&gt;</span> <span class="o">...</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>on all the files you changed, and do</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="s2">&quot;&lt;your message&gt;&quot;</span>
+</pre></div>
+</div>
+<p>to commit them.  Once you’ve made all the commits you want to make, push them to
+your GitHub fork with</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">push</span> <span class="o">-</span><span class="n">u</span> <span class="n">origin</span>
+</pre></div>
+</div>
+<p>and make the PR using the GitHub web interface in the main QuTiP repository.</p>
 </div>
 </div>
 
