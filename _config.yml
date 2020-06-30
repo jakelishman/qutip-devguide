@@ -1,4 +1,4 @@
 include:
-  - _static/
-  - _sources/
-  - fake/
+  - _static
+  - _sources
+  - fake
