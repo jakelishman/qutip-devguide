@@ -115,10 +115,9 @@ object :math:`A(t)` which can be described by
 .. math::
    A(t) = \sum_k f_k(t) A_k
 
-for some scalar, time-dependent functions :math:`f_k(t)` and some time-\ 
-*independent* quantum objects in compatible Hilbert spaces :math:`A_k` quantum
-objects in compatible Hilbert spaces :math:`A_k`.  These :math:`A_k` will be
-instances of :obj:`~qutip.Qobj`.
+for some scalar, time-dependent functions :math:`f_k(t)` and some time-\
+*independent* quantum objects in compatible Hilbert spaces :math:`A_k`.  These
+:math:`A_k` will be instances of :obj:`~qutip.Qobj`.
 
 This class is mostly for usage in solvers and optimisers which work on
 time-dependent objects, as it can transpile the scalar time-dependence down to
