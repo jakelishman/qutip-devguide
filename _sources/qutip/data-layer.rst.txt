@@ -176,6 +176,8 @@ principle of low-level QuTiP development that *you must not store references to
 other objects' data*.  Other libraries allow this, but instead require that you
 suitably increment the relevant refcounts.  We do not keep track of anything
 like this, and simply do not permit references in this manner within our code.
+Cython operations like :meth:`~qutip.core.data.CSR.copy` will always copy the
+data, *never* return a view.
 
 Sometimes, however, the user will need to access the data directly from Python
 space.  In these cases, we must ensure that the data buffer cannot be freed
@@ -206,5 +208,35 @@ cannot be freed from NumPy.
 Dense: :obj:`~qutip.core.data.Dense`
 ------------------------------------
 
-.. todo::
-   Add some information about this class.
+The :obj:`~qutip.core.data.Dense` format is the most "traditional" storage
+format for linear algebra operators and vectors.  This simply explicitly stores
+a value for every single element in the matrix, even if it is zero.  There is no
+need to store any other information, other than the matrix's shape, so for small
+dense matrices, this can actually result in less memory usage than sparse
+formats.
+
+We guarantee that the data is contiguous in either row-major (C) or column-major
+(Fortran) format.  This is useful in several places when interfacing with LAPACK
+and BLAS functions, and generally keeps memory access fast and cache-friendly.
+This is in contrast to NumPy, where taking strided views onto data can return a
+new array whose memory is *not* contiguous.  NumPy makes this decision so that
+strided views and slices can return faster as they do not need to copy memory,
+but these operations are exceptionally rare within the QuTiP core, so we do not
+optimise our data structures to support them.
+
+
+Python Access and Memory Management
+...................................
+
+Similarly to :obj:`~qutip.core.data.CSR`, :obj:`~qutip.core.data.Dense` provides
+the :meth:`~qutip.core.data.Dense.as_ndarray` method to view its data as a NumPy
+array.  This view can be used to modify the data of the object in-place.
+
+As with :obj:`~qutip.core.data.CSR`, no Python reference is created until the
+Python user specifically requests the NumPy array view.  The memory management
+is handled in the same way; when instantiated from Cython code, the backing will
+be a raw C pointer which is deallocated when the Python instance of
+:obj:`~qutip.core.data.Dense` goes out-of-scope and is garbage collected.  If
+the NumPy view is used, then ownership of the pointer is transferred to NumPy,
+and a reference to the :obj:`~numpy.ndarray` is stored within the instance to
+ensure it always outlives us.

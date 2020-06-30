@@ -87,7 +87,7 @@
             
               <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">QuTiP Package</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="development-environment.html">Preparing a Development Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development-environment.html">Creating a Development Environment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="quantum-objects.html">Quantum Objects</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Data Layer</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#why-not-just-use-numpy">Why Not Just Use NumPy?</a></li>
@@ -318,7 +318,9 @@ space.  Here we use low-level C memory management, and rely on the general
 principle of low-level QuTiP development that <em>you must not store references to
 other objects’ data</em>.  Other libraries allow this, but instead require that you
 suitably increment the relevant refcounts.  We do not keep track of anything
-like this, and simply do not permit references in this manner within our code.</p>
+like this, and simply do not permit references in this manner within our code.
+Cython operations like <code class="xref py py-meth docutils literal notranslate"><span class="pre">copy()</span></code> will always copy the
+data, <em>never</em> return a view.</p>
 <p>Sometimes, however, the user will need to access the data directly from Python
 space.  In these cases, we must ensure that the data buffer cannot be freed
 while the user holds a reference to it.  We allow the user to use the
@@ -345,9 +347,33 @@ cannot be freed from NumPy.</p>
 </div>
 <div class="section" id="dense-dense">
 <h3>Dense: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Dense</span></code><a class="headerlink" href="#dense-dense" title="Permalink to this headline">¶</a></h3>
-<div class="admonition-todo admonition" id="id2">
-<p class="admonition-title">Todo</p>
-<p>Add some information about this class.</p>
+<p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">Dense</span></code> format is the most “traditional” storage
+format for linear algebra operators and vectors.  This simply explicitly stores
+a value for every single element in the matrix, even if it is zero.  There is no
+need to store any other information, other than the matrix’s shape, so for small
+dense matrices, this can actually result in less memory usage than sparse
+formats.</p>
+<p>We guarantee that the data is contiguous in either row-major (C) or column-major
+(Fortran) format.  This is useful in several places when interfacing with LAPACK
+and BLAS functions, and generally keeps memory access fast and cache-friendly.
+This is in contrast to NumPy, where taking strided views onto data can return a
+new array whose memory is <em>not</em> contiguous.  NumPy makes this decision so that
+strided views and slices can return faster as they do not need to copy memory,
+but these operations are exceptionally rare within the QuTiP core, so we do not
+optimise our data structures to support them.</p>
+<div class="section" id="python-access-and-memory-management">
+<h4>Python Access and Memory Management<a class="headerlink" href="#python-access-and-memory-management" title="Permalink to this headline">¶</a></h4>
+<p>Similarly to <code class="xref py py-obj docutils literal notranslate"><span class="pre">CSR</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Dense</span></code> provides
+the <code class="xref py py-meth docutils literal notranslate"><span class="pre">as_ndarray()</span></code> method to view its data as a NumPy
+array.  This view can be used to modify the data of the object in-place.</p>
+<p>As with <code class="xref py py-obj docutils literal notranslate"><span class="pre">CSR</span></code>, no Python reference is created until the
+Python user specifically requests the NumPy array view.  The memory management
+is handled in the same way; when instantiated from Cython code, the backing will
+be a raw C pointer which is deallocated when the Python instance of
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">Dense</span></code> goes out-of-scope and is garbage collected.  If
+the NumPy view is used, then ownership of the pointer is transferred to NumPy,
+and a reference to the <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code></a> is stored within the instance to
+ensure it always outlives us.</p>
 </div>
 </div>
 </div>
