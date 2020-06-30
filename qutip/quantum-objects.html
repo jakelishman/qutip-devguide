@@ -37,7 +37,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Data Layer" href="data-layer.html" />
-    <link rel="prev" title="Preparing a Development Environment" href="development-environment.html" /> 
+    <link rel="prev" title="Creating a Development Environment" href="development-environment.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -87,7 +87,7 @@
             
               <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">QuTiP Package</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="development-environment.html">Preparing a Development Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development-environment.html">Creating a Development Environment</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Quantum Objects</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#data-store">Data Store</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#auxiliary-information">Auxiliary Information</a></li>
@@ -266,9 +266,8 @@ represents a time-dependent quantum objects.  Essentially, it represents an
 object <span class="math notranslate nohighlight">\(A(t)\)</span> which can be described by</p>
 <div class="math notranslate nohighlight">
 \[A(t) = \sum_k f_k(t) A_k\]</div>
-<p>for some scalar, time-dependent functions <span class="math notranslate nohighlight">\(f_k(t)\)</span> and some time-<em>independent</em> quantum objects in compatible Hilbert spaces <span class="math notranslate nohighlight">\(A_k\)</span> quantum
-objects in compatible Hilbert spaces <span class="math notranslate nohighlight">\(A_k\)</span>.  These <span class="math notranslate nohighlight">\(A_k\)</span> will be
-instances of <a class="reference external" href="http://qutip.org/docs/latest/apidoc/classes.html#qutip.Qobj" title="(in QuTiP: Quantum Toolbox in Python v4.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Qobj</span></code></a>.</p>
+<p>for some scalar, time-dependent functions <span class="math notranslate nohighlight">\(f_k(t)\)</span> and some time-<em>independent</em> quantum objects in compatible Hilbert spaces <span class="math notranslate nohighlight">\(A_k\)</span>.  These
+<span class="math notranslate nohighlight">\(A_k\)</span> will be instances of <a class="reference external" href="http://qutip.org/docs/latest/apidoc/classes.html#qutip.Qobj" title="(in QuTiP: Quantum Toolbox in Python v4.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Qobj</span></code></a>.</p>
 <p>This class is mostly for usage in solvers and optimisers which work on
 time-dependent objects, as it can transpile the scalar time-dependence down to
 C code and compile this to run natively.  The classes may be instantiated
@@ -293,7 +292,7 @@ called.  This method produces a C extension type <code class="xref py py-obj doc
         <a href="data-layer.html" class="btn btn-neutral float-right" title="Data Layer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="development-environment.html" class="btn btn-neutral float-left" title="Preparing a Development Environment" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="development-environment.html" class="btn btn-neutral float-left" title="Creating a Development Environment" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
