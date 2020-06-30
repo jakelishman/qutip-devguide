@@ -183,5 +183,96 @@ your GitHub fork with ::
 and make the PR using the GitHub web interface in the main QuTiP repository.
 
 
-
 .. _GitHub guide to Flow: https::guides.github.com/introduction/flow
+
+
+Pull Requests
+=============
+
+Please give the pull request a short, clear title that gives us an idea of what
+your proposed change does.  It's good if this not more ten words, and starts
+with an imperative verb.  Good examples of titles are:
+
+- `Create PR and issue templates <https://github.com/qutip/qutip/pull/1198>`_
+- `Fix spin Husimi/Wigner functions <https://github.com/qutip/qutip/pull/1195>`_
+- `Fix function QubitCircuit.add_circuit <https://github.com/qutip/qutip/pull/1269>`_
+- `Remove eigh usage on mac <https://github.com/qutip/qutip/pull/1288>`_
+
+In the body of the PR, please use the template provided.  In particular,
+describe in words what you've done and why you've done it and link to any issues
+that are related.  Please also write a short comment (about a sentence) for the
+changelog.  If you have made quite a small PR, the changelog can just be a
+copy-paste of the title.
+
+All PRs will be reviewed by the admin team, and merged subject to their
+comments.  We're happy to answer questions and help you if we ask for changes.
+If you have lots of questions before you start, please consider raising an issue
+on GitHub (on our copy of the repository) first, so we can discuss it with you
+before you start coding.  If you've noticed a bug and you are submitted a PR to
+fix it, you may also want to check it hasn't been reported before as an issue,
+and comment on it if it has to let us know you're working on it.
+
+For any major new features, we strongly recommend creating an issue first, so we
+can tell you if we think it's appropriate for the library, or point you to the
+repository of a more suitable plugin, and organise the design with you before
+you start coding.
+
+When you make the PR, our continuous integration server will run the full test
+suite on a variety of machines, and check the code style.  You should run the
+tests locally before you make the PR to check to save you time, because waiting
+for the CI to complete can take a while if the repository is active.  We will
+not accept any PR with failing tests, unless the failure was not caused by you.
+
+
+Code Style
+==========
+
+All new Python code should follow the standard `PEP 8 style guide`_.  Our CI
+pipelines will test this when you make a PR, although in limited circumstances
+we may accept a PR which breaks the 79-character line-length requirement by a
+small amount if doing so improves readability.
+
+You can locally check that you are following PEP 8 by using the ``pycodestyle``
+(`link <https://pycodestyle.pycqa.org>`__) or ``flake8`` (`link
+<https://flake8.pycqa.org>`__) tools, which can be installed by either ``conda``
+or ``pip``.  We *strongly* recommend that you do this before commiting.
+
+You do not need to fix all existing PEP 8 issues in a file that you are editing.
+If you want to do so, please ensure that these changes are added as a separate
+commit, and ideally a completely separate PR.  It is difficult to review the
+meaningful code changes you have made when they are crowded out by minor
+formatting ones.
+
+All functions, classes and methods should have up-to-date docstrings.  We use
+`Sphinx's autodoc extension`_ to generate API documentation, so please ensure
+that your docstrings follow the `NumPy docstring format`_.
+
+New or changed functionality should have comprehensive unit tests.  Add these
+into the ``qutip/tests`` folder, following the conventions in there.  Try to add
+them to the relevant file if it already exists.  We use ``pytest`` to run the
+tests, so write your tests in this style; in particular, there is no need for
+``unittest``-type ``unittest.TestCase`` classes with ``setUp`` and ``tearDown``
+methods, and multiple tests on similar objects should make use of the
+`parametrisation routines`_.
+
+New features should be supported by an example `Jupyter notebook`_ in the
+separate ``qutip-notebooks`` repository (`qutip/qutip-notebooks on GitHub`_).
+This will require making a separate PR to that repository, and it's helpful if
+you add links between the two in the descriptions.
+
+Please use the same parameter and attribute names that are already in use within
+the library when referring to similar objects, even if to do so would break the
+PEP 8 rules for new names.  Please prefix private attributes and methods in
+classes with an underscore, and use new classes sparingly; QuTiP is designed for
+scientific notebook use, and a "pure" object-orientated style does not fit this
+use case.  Please do not change existing public parameter and attribute names
+without consulting with us first, even if the names are ugly, because many users
+may depend on the names staying the same.
+
+
+.. _PEP 8 style guide: https://www.python.org/dev/peps/pep-0008
+.. _Sphinx's autodoc extension: https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html
+.. _NumPy docstring format: https://numpydoc.readthedocs.io/en/latest/format.html
+.. _parametrisation routines: https://docs.pytest.org/en/stable/parametrize.html
+.. _Jupyter notebook: https://jupyter.org
+.. _qutip/qutip-notebooks on GitHub: https://github.com/qutip/qutip-notebooks
