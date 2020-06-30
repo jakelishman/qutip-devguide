@@ -44,14 +44,20 @@ switch to by using ``conda activate qutip-dev``.  Note that this does *not*
 install any version of ``qutip``, because we will be building that from source.
 
 
-Creating a Fork
-===============
+Creating a Local Copy
+=====================
 
 At some point you will (hopefully) want to share your changes with us, so you
 should fork the `main repository on GitHub`_ into your account, and then clone
 that forked copy.  If you do not create a fork on GitHub, you will be able to
 read and install QuTiP, but you will not be able to push any changes you make
 back to GitHub so you can share them with us.
+
+To create a fork, go to the relevant repository's page on GitHub (for example,
+the main QuTiP repository is `https://github.com/qutip/qutip`_
+
+There is more than one repository in the QuTiP organisation which may need to be
+updated with any change, so for local bookkeeping you may want to
 
 .. _main repository on GitHub: https://github.com/qutip/qutip
 
