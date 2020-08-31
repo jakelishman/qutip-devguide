@@ -1,98 +1,12 @@
-Data Layer
-##########
-
-The bulk of mathematical heavy lifting in QuTiP is handled by functions on the
-"data layer".  The term "data layer" is used to refer to all linear algebra
-types which QuTiP uses to represent low-level data, operations which take place
-on these types, and the dispatch logic necessary to ensure that the correct
-operations are called when given two arbitrary, known types.
-
-All data types on the data layer inherit from :obj:`qutip.core.data.Data`,
-although this is itself an abstract type which cannot be instantiated.
-Dispatch functions are instances of the type :obj:`qutip.core.data.Dispatch`,
-which provide a Python-callable interface.
-
-The data layer is primarily written in Cython, and compiled to C++ before being
-compiled fully into CPython extension types.
-
-
-Why Not Just Use NumPy?
-=======================
-
-NumPy is a fantastic tool for representing numerical data, but it is limited to
-dense matrices, while many operators in quantum mechanics are often much more
-suited to a sparse representation.
-
-For cases which *are* well-described by dense matrices, the data-layer type
-:obj:`~qutip.core.data.Dense` is very similar to a NumPy array underneath (and
-in fact can be directly viewed as one using its
-:meth:`~qutip.core.data.Dense.as_array` method), but is guaranteed to hold
-exactly two dimensions, of which one is stored contiguously.  These additional
-internal guarantees help speed in the tightest loops, and the type can be
-constructed very quickly from an :obj:`~numpy.ndarray` that is already in the
-correct format.
-
-For the large number of cases where the underlying data is much sparser, we use
-the :obj:`qutip.core.data.CSR` type, which is a form of compressed sparse row
-matrix very similar to SciPy's :obj:`scipy.sparse.csr_matrix`.  There are a few
-reasons for not wanting to use SciPy's implementation:
-
-#. Instantiation of :obj:`~scipy.sparse.csr_matrix` is very slow.
-#. :obj:`~scipy.sparse.csr_matrix` can use different types as integer indices
-   in its index arrays, but this can make it more difficult to interface with C
-   code underneath.
-#. QuTiP has many parts where very low-level C access is required, and having
-   to always deal with Python types means that we must often hold the GIL and
-   pay non-trivial overhead penalties when accessing Python attributes.
-
-Older versions of QuTiP used to reduce these issues by using a
-:class:`fast_csr_matrix` type which derived from
-:obj:`~scipy.sparse.csr_matrix` and overrode its :meth:`!__init__` method to
-remove the slow index-checking code and ensured that only data of the correct
-types was stored.  In C-level code, a secondary struct :c:struct:`CSR_Matrix`
-was defined, which led to various parts of the code have several entry points,
-depending on how many of the arguments had been converted to the structure
-representation, and there was still a lot of overhead in converting back to
-Python-level code at the end.
-
-The new :obj:`~qutip.core.data.CSR` type stores data in conceptually the same
-manner as SciPy, but is defined purely at the Cython level.  This means that it
-pays almost no overhead when switching between Python and C access, and code
-working with the types need not hold the GIL.  Further, the internal storage
-makes similar guarantees to the :obj:`~qutip.core.data.Dense` format about the
-data storage, simplifying mathematical code within QuTiP.  It can also be
-viewed as a SciPy object when it needs to be used from within Python.
-
-Previous versions of QuTiP also *only* supported the :class:`fast_csr_matrix`
-type as the backing data store.  There are many cases where this is a deeply
-unsuitable type: in small systems, sparse matrices require large overheads and
-stymie data caching, while even in large systems many operations produce
-outputs which are nearly 100% dense such as time-evolution operators and matrix
-exponentials.  For optimal control applications, the majority of the time spent
-was just in dealing with the sparse overheads.  Allowing multiple types to
-represent data lets us use the right tool for each job, but it does mean that
-further care is taken to ensure that all the mathematical parts of the library
-can function without needing to produce an exponential number of new
-mathematical functions whenever a type or new operation is added.
-
-
-Dispatch Operations
-===================
-
-.. todo::
-   Still to write this section, in particular there's still some design parts
-   that need to be ironed out.
-
-
 Type Descriptions
-=================
+#################
 
 There are currently two first-class data types defined in QuTiP, but the
 generic nature of the dispatch operations means that it is relatively
 straightforward to add new types for specific use-cases.
 
 Abstract Base: :obj:`~qutip.core.data.Data`
--------------------------------------------
+===========================================
 
 The base :obj:`~qutip.core.data.Data` requires very little information to be
 stored---only the two-dimensional shape of the matrix.  This is common to all
@@ -100,7 +14,7 @@ data types, and readable (but not writeable) from Python.
 
 
 Compressed Sparse Row: :obj:`~qutip.core.data.CSR`
---------------------------------------------------
+==================================================
 
 The `compressed sparse row format`_ has historically always been QuTiP's format
 of choice.  Only non-zero data entries are stored, and information is kept
@@ -129,7 +43,7 @@ initialisation from Python or C using the type's
 
 
 Access From Python
-..................
+------------------
 
 We do not expose the underlying memory buffers to the user in Python space by
 default.  This is to avoid needing to acquire the GIL every time one of our
@@ -161,7 +75,7 @@ helps with memory management.
 
 
 Memory Management
-.................
+-----------------
 
 When constructed from Python, :obj:`~qutip.core.data.CSR` does not take
 ownership of its memory since we know we already have to be dealing with
@@ -206,7 +120,7 @@ cannot be freed from NumPy.
 
 
 Dense: :obj:`~qutip.core.data.Dense`
-------------------------------------
+====================================
 
 The :obj:`~qutip.core.data.Dense` format is the most "traditional" storage
 format for linear algebra operators and vectors.  This simply explicitly stores
@@ -226,7 +140,7 @@ optimise our data structures to support them.
 
 
 Python Access and Memory Management
-...................................
+-----------------------------------
 
 Similarly to :obj:`~qutip.core.data.CSR`, :obj:`~qutip.core.data.Dense` provides
 the :meth:`~qutip.core.data.Dense.as_ndarray` method to view its data as a NumPy
