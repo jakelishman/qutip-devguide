@@ -64,7 +64,7 @@ the main QuTiP repository is
 `qutip/qutip on GitHub <https://github.com/qutip/qutip>`_), and click the fork
 button in the top right.  This will create a linked version of the repository in
 your own GitHub account.  GitHub also has `its own documentation on forking
-<https://guides.github.com/activies/forking>`.
+<https://guides.github.com/activies/forking>`_.
 
 You can now "clone" your fork onto your local computer.  The command will look
 something like ::
@@ -105,10 +105,10 @@ environment active, and you will get your development environment.
 
 .. note::
    In general, you do not need to re-run ``setup.py`` if you only make changes
-   to the Python files.  These changes should appear immediately, when you
-   re-import ``qutip`` albeit with the standard Python proviso that you may need
-   to re-open the Python interpreter or use :func:`importlib.reload` to clear
-   the package cache.
+   to the Python files.  These changes should appear immediately when you
+   re-import ``qutip``, albeit with the standard Python proviso that you may
+   need to re-open the Python interpreter or use :func:`importlib.reload` to
+   clear the package cache.
 
    If you make changes to any Cython files, you *must*
    re-run ``setup.py develop`` in the same manner, or your extensions will not
@@ -208,7 +208,7 @@ All PRs will be reviewed by the admin team, and merged subject to their
 comments.  We're happy to answer questions and help you if we ask for changes.
 If you have lots of questions before you start, please consider raising an issue
 on GitHub (on our copy of the repository) first, so we can discuss it with you
-before you start coding.  If you've noticed a bug and you are submitted a PR to
+before you start coding.  If you've noticed a bug and you have submitted a PR to
 fix it, you may also want to check it hasn't been reported before as an issue,
 and comment on it if it has to let us know you're working on it.
 

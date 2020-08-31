@@ -176,7 +176,7 @@
 “data layer”.  The term “data layer” is used to refer to all linear algebra
 types which QuTiP uses to represent low-level data, operations which take place
 on these types, and the dispatch logic necessary to ensure that the correct
-operations are called when given two abstract types.</p>
+operations are called when given two arbitrary, known types.</p>
 <p>All data types on the data layer inherit from <code class="xref py py-obj docutils literal notranslate"><span class="pre">qutip.core.data.Data</span></code>,
 although this is itself an abstract type which cannot be instantiated.
 Dispatch functions are instances of the type <code class="xref py py-obj docutils literal notranslate"><span class="pre">qutip.core.data.Dispatch</span></code>,
@@ -198,11 +198,11 @@ constructed very quickly from an <a class="reference external" href="https://num
 correct format.</p>
 <p>For the large number of cases where the underlying data is much sparser, we use
 the <code class="xref py py-obj docutils literal notranslate"><span class="pre">qutip.core.data.CSR</span></code> type, which is a form of compressed sparse row
-matrix very similar to SciPy’s <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html#scipy.sparse.csr_matrix" title="(in SciPy v1.5.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.sparse.csr_matrix</span></code></a>.  There are a few
+matrix very similar to SciPy’s <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html#scipy.sparse.csr_matrix" title="(in SciPy v1.5.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.sparse.csr_matrix</span></code></a>.  There are a few
 reasons for not wanting to use SciPy’s implementation:</p>
 <ol class="arabic simple">
-<li><p>Instantiation of <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html#scipy.sparse.csr_matrix" title="(in SciPy v1.5.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">csr_matrix</span></code></a> is very slow.</p></li>
-<li><p><a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html#scipy.sparse.csr_matrix" title="(in SciPy v1.5.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">csr_matrix</span></code></a> can use different types as integer indices
+<li><p>Instantiation of <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html#scipy.sparse.csr_matrix" title="(in SciPy v1.5.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">csr_matrix</span></code></a> is very slow.</p></li>
+<li><p><a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html#scipy.sparse.csr_matrix" title="(in SciPy v1.5.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">csr_matrix</span></code></a> can use different types as integer indices
 in its index arrays, but this can make it more difficult to interface with C
 code underneath.</p></li>
 <li><p>QuTiP has many parts where very low-level C access is required, and having
@@ -211,7 +211,7 @@ pay non-trivial overhead penalties when accessing Python attributes.</p></li>
 </ol>
 <p>Older versions of QuTiP used to reduce these issues by using a
 <code class="xref py py-class docutils literal notranslate"><span class="pre">fast_csr_matrix</span></code> type which derived from
-<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html#scipy.sparse.csr_matrix" title="(in SciPy v1.5.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">csr_matrix</span></code></a> and overrode its <code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code> method to
+<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html#scipy.sparse.csr_matrix" title="(in SciPy v1.5.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">csr_matrix</span></code></a> and overrode its <code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code> method to
 remove the slow index-checking code and ensured that only data of the correct
 types was stored.  In C-level code, a secondary struct <code class="xref c c-struct docutils literal notranslate"><span class="pre">CSR_Matrix</span></code>
 was defined, which led to various parts of the code have several entry points,
@@ -272,7 +272,7 @@ arithmetic to be consistent with Python indexing (although we do actually allow
 negative indexing into C arrays).  All variables which are used to index into
 an array should follow this type within C or Cython code.</p>
 <p><code class="xref py py-obj docutils literal notranslate"><span class="pre">CSR</span></code> can be instantiated from Python in similar ways to
-SciPy’s <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html#scipy.sparse.csr_matrix" title="(in SciPy v1.5.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">csr_matrix</span></code></a>, but it also provides fast-path
+SciPy’s <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html#scipy.sparse.csr_matrix" title="(in SciPy v1.5.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">csr_matrix</span></code></a>, but it also provides fast-path
 initialisation from Python or C using the type’s
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">copy()</span></code> method, or the low-level constructors
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">empty</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">zeroes</span></code>,
@@ -286,17 +286,17 @@ objects is created, especially when C code creates several of them in a
 function which otherwise would not need to speak to the Python interpreter at
 all.</p>
 <p>Instead, we expose a method <code class="xref py py-meth docutils literal notranslate"><span class="pre">as_scipy()</span></code>, which
-returns a <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html#scipy.sparse.csr_matrix" title="(in SciPy v1.5.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">csr_matrix</span></code></a>.  So that the Python-space user can
+returns a <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html#scipy.sparse.csr_matrix" title="(in SciPy v1.5.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">csr_matrix</span></code></a>.  So that the Python-space user can
 work with the data if they desire, this output is simply a “view” onto the same
 underlying data buffers.  This has some memory management implications that
 will be discussed in the next section.</p>
-<p>The problem of <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html#scipy.sparse.csr_matrix" title="(in SciPy v1.5.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">csr_matrix</span></code></a> having a slow constructor still
+<p>The problem of <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html#scipy.sparse.csr_matrix" title="(in SciPy v1.5.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">csr_matrix</span></code></a> having a slow constructor still
 persists, however.  We do not want to have to define a whole new derived class
 (like the old <code class="xref py py-class docutils literal notranslate"><span class="pre">fast_csr_matrix</span></code>) just to override <code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code>,
 mostly because it’s unnecessary and bloats our own code, but it also may have
 annoying knock-on effects for users with imperfect polymorphic code and it adds
 overhead to method resolution.  Instead, we simply allocate space for a
-<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html#scipy.sparse.csr_matrix" title="(in SciPy v1.5.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">csr_matrix</span></code></a> with its
+<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html#scipy.sparse.csr_matrix" title="(in SciPy v1.5.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">csr_matrix</span></code></a> with its
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">__new__()</span></code> method, call the first reasonable
 method in the initialisation chain, and fill in the rest in Cython code.
 Because of the guarantees about the <code class="xref py py-obj docutils literal notranslate"><span class="pre">CSR</span></code> type, we know
