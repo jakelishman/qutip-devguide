@@ -4,10 +4,11 @@ Motivation
 We always want to use a suitable data-storage format when representing operators
 and states, even if this is not always the *same* format.  Even if there are
 only two different formats, this poses a large problem for code duplication in
-the library; functions like ``add`` and ``matmul`` take two inputs and return
-one output, giving eight different type specialisations that need to be written
-and maintained for full coverage, or every mathematical function turns into the
-nightmarish ::
+the library; functions like :obj:`~qutip.core.data.add` and
+:obj:`~qutip.core.data.matmul` take two inputs and return one output, giving
+eight different type specialisations that need to be written and maintained for
+full coverage, or every mathematical function turns into something nightmarish
+like ::
 
    def add(left, right, out=None):
       if isinstance(left, CSR):
@@ -42,7 +43,7 @@ suited to a sparse representation.
 For cases which *are* well-described by dense matrices, the data-layer type
 :obj:`~qutip.core.data.Dense` is very similar to a NumPy array underneath (and
 in fact can be directly viewed as one using its
-:meth:`~qutip.core.data.Dense.as_array` method), but is guaranteed to hold
+:meth:`~qutip.core.data.Dense.as_ndarray` method), but is guaranteed to hold
 exactly two dimensions, of which one is stored contiguously.  These additional
 internal guarantees help speed in the tightest loops, and the type can be
 constructed very quickly from an :obj:`~numpy.ndarray` that is already in the
@@ -60,6 +61,8 @@ reasons for not wanting to use SciPy's implementation:
 #. QuTiP has many parts where very low-level C access is required, and having
    to always deal with Python types means that we must often hold the GIL and
    pay non-trivial overhead penalties when accessing Python attributes.
+#. We need to add enough specialised routines that it's not such a big deal if
+   we replicate some functionality as well.
 
 Older versions of QuTiP used to reduce these issues by using a
 :class:`fast_csr_matrix` type which derived from
@@ -90,3 +93,10 @@ represent data lets us use the right tool for each job, but it does mean that
 further care is taken to ensure that all the mathematical parts of the library
 can function without needing to produce an exponential number of new
 mathematical functions whenever a type or new operation is added.
+
+Further, even if we were to use NumPy and SciPy objects, we would still be
+faced with the problem of handling multiple dispatch.  As soon as QuTiP needed
+to add any new functionality that was not already a function in
+:obj:`scipy.sparse` or :obj:`scipy.linalg`, particularly one that takes two
+matrices as arguments, we would have had to implement the same dispatch system
+anyway.
