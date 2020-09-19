@@ -1,0 +1,389 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Converting Between Types: to &mdash; QuTiP Developers&#39; Guide 5.0.0alpha1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Dispatch Operations" href="dispatch.html" />
+    <link rel="prev" title="Motivation" href="motivation.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> QuTiP Developers' Guide
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                5.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">QuTiP Package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../development-environment.html">Creating a Development Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quantum-objects.html">Quantum Objects</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Data Layer</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="terminology.html">Terminology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="motivation.html">Motivation</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Converting Between Types: <code class="xref py py-obj docutils literal notranslate"><span class="pre">to</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#basic-usage">Basic Usage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#adding-new-types">Adding New Types</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-it-works">How It Works</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#implementation">Implementation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#efficiency-notes">Efficiency Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dispatch.html">Dispatch Operations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="types.html">Type Descriptions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/index.html">Example Notebooks</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">QuTiP Developers' Guide</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">QuTiP Package</a> &raquo;</li>
+        
+          <li><a href="index.html">Data Layer</a> &raquo;</li>
+        
+      <li>Converting Between Types: <code class="xref py py-obj docutils literal notranslate"><span class="pre">to</span></code></li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/qutip/data-layer/type-conversion.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="converting-between-types-to">
+<h1>Converting Between Types: <code class="xref py py-obj docutils literal notranslate"><span class="pre">to</span></code><a class="headerlink" href="#converting-between-types-to" title="Permalink to this headline">¶</a></h1>
+<p>The backbone of the data layer is the ability to freely convert between two
+given types.  As long as we have this, we know we can always change our inputs
+into a set of types which we have a known-good function to handle.</p>
+<p>The object <code class="xref py py-obj docutils literal notranslate"><span class="pre">to</span></code> is the true source of all types on the
+data layer.  If a type is known to <code class="xref py py-obj docutils literal notranslate"><span class="pre">to</span></code>, it will work with any mathematical
+operation in QuTiP.  For a type to be known, at a minimum it needs one
+conversion <em>to</em> it from a known data type, and one conversion <em>from</em> it to a
+known data type.</p>
+<p>Some examples of usage:</p>
+<ul>
+<li><p>simple conversion from one type to another</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">matrix</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">dense</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">matrix</span>
+<span class="go">Dense(shape=(5, 5), fortran=True)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">CSR</span><span class="p">,</span> <span class="n">matrix</span><span class="p">)</span>
+<span class="go">CSR(shape=(5, 5), nnz=5)</span>
+</pre></div>
+</div>
+</li>
+<li><p>get a callable function for a particular conversion from one specified
+type to another</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="o">.</span><span class="n">to</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">CSR</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">Dense</span><span class="p">]</span>
+<span class="go">&lt;converter to CSR from Dense&gt;</span>
+</pre></div>
+</div>
+</li>
+<li><p>get a callable function into a particular type from any data-layer type</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="o">.</span><span class="n">to</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">Dense</span><span class="p">]</span>
+<span class="go">&lt;converter to Dense&gt;</span>
+</pre></div>
+</div>
+</li>
+<li><p>add a new data layer type to the conversion, and have everything else filled
+in automatically</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">NewDataType</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">Data</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="c1"># [...]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">new_from_dense</span><span class="p">(</span><span class="n">matrix</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">Dense</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NewDataType</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="c1"># [...]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">dense_from_new</span><span class="p">(</span><span class="n">matrix</span><span class="p">:</span> <span class="n">NewDataType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">data</span><span class="o">.</span><span class="n">Dense</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="c1"># [...]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="o">.</span><span class="n">to</span><span class="o">.</span><span class="n">add_conversions</span><span class="p">([</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">NewDataType</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">Dense</span><span class="p">,</span> <span class="n">new_from_dense</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">Dense</span><span class="p">,</span> <span class="n">NewDataType</span><span class="p">,</span> <span class="n">dense_from_new</span><span class="p">),</span>
+<span class="gp">... </span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="o">.</span><span class="n">to</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">CSR</span><span class="p">,</span> <span class="n">NewDataType</span><span class="p">]</span>
+<span class="go">&lt;converter to CSR from NewDataType&gt;</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<div class="section" id="basic-usage">
+<h2>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h2>
+<p>Convert data into a different type.  This object is the knowledge source for
+every allowable data-layer type in QuTiP, and provides the conversions between
+all of them.</p>
+<p>The base use is to call this object as a function with signature</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">converted_data</span>
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">type</span></code> is a type object (such as <code class="xref py py-obj docutils literal notranslate"><span class="pre">CSR</span></code>, or that
+obtained by calling <code class="docutils literal notranslate"><span class="pre">type(matrix)</span></code>) and <code class="docutils literal notranslate"><span class="pre">data</span></code> is data in a data-layer type.
+If you want to create a data-layer type from non-data-layer data, use
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">qutip.core.data.create</span></code> instead.</p>
+<p>You can get individual converters by using the key-lookup syntax.  For example,
+the item</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">to</span><span class="p">[</span><span class="n">CSR</span><span class="p">,</span> <span class="n">Dense</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>is a callable which accepts arguments of type <code class="xref py py-obj docutils literal notranslate"><span class="pre">Dense</span></code> and returns the
+equivalent item of type <code class="xref py py-obj docutils literal notranslate"><span class="pre">CSR</span></code>.  You can also get a generic converter to a
+particular data type if only one type is specified, so</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">to</span><span class="p">[</span><span class="n">Dense</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>is a callable which accepts all known (at the time of the lookup) data-layer
+types, and converts them to <code class="docutils literal notranslate"><span class="pre">Dense</span></code>.  See the <a class="reference internal" href="#efficiency-notes">Efficiency Notes</a> section
+below for more detail.</p>
+<p>Internally, the conversion process may go through several steps if new
+data-layer types have been defined with few conversions specified between them
+and the pre-existing converters.  The first-class QuTiP data types <code class="xref py py-obj docutils literal notranslate"><span class="pre">Dense</span></code>
+and <code class="xref py py-obj docutils literal notranslate"><span class="pre">CSR</span></code> will typically have the fastest connectivity.</p>
+</div>
+<div class="section" id="adding-new-types">
+<h2>Adding New Types<a class="headerlink" href="#adding-new-types" title="Permalink to this headline">¶</a></h2>
+<p>You can add new data-layer types by calling the
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">add_conversions</span></code> method of this object, which will
+also rebuild all of the mathematical dispatchers.  You must specify one function
+which converts a known data type <em>into</em> your new type, and one that converts
+<em>from</em> your new type into a known type.</p>
+<p>Because all the dispatchers automatically handle missing specialisations for all
+types known by using <code class="xref py py-obj docutils literal notranslate"><span class="pre">to</span></code>, this is completely sufficient
+to add an object to QuTiP.</p>
+</div>
+<div class="section" id="how-it-works">
+<h2>How It Works<a class="headerlink" href="#how-it-works" title="Permalink to this headline">¶</a></h2>
+<p>At its simplest, the problem is how to convert from every type to every other
+type without requiring the developer to write a function for every possible
+input and output, which is quadratic complexity.  This is a directed-graph
+traversal problem; the types are the vertices, and the functions converting from
+one type to another are the edges.  In general, a conversion from one type to
+another is the function composition of the edges of the shortest path.</p>
+<p>We use the Floyd–Warshall algorithm
+(<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csgraph.floyd_warshall.html#scipy.sparse.csgraph.floyd_warshall" title="(in SciPy v1.5.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.sparse.csgraph.floyd_warshall</span></code></a>) evaluate the predecessor matrix.
+We build up a <code class="xref py py-obj docutils literal notranslate"><span class="pre">_converter</span></code> object for every pair of
+types from this matrix; we do not expect a large number of types, so we are not
+concerned with the additional memory usage of this method, but we want to
+eliminate as much run-time cost as possible.</p>
+<p>The graph view of this problem also allows us to associate a weight with every
+specialised conversion function.  This means we can penalise certain edges, such
+as making the dense-to-sparse conversion less desirable than one which converts
+between different dense representations.</p>
+<p>Adding a new type in this model is simple; the graph remains completely
+connected when a new vertex is added, provided there is an inbound edge from
+inside the current graph and an outbound edge to the same graph.</p>
+<p>There is no particular reason to prefer the Floyd–Warshall algorithm over
+Dijkstra or Bellman–Ford.  We forbid negative weights and the number of
+vertices should be relatively small, so any of these would be suitable.</p>
+</div>
+<div class="section" id="implementation">
+<h2>Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h2>
+<p>The function <code class="xref py py-obj docutils literal notranslate"><span class="pre">to</span></code> is a singleton instance of the class
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">qutip.core.data.convert._to</span></code>.  Its state is effectively global state of
+the QuTiP module.  We use a class with attributes instead of module-level
+variables for two reasons:</p>
+<ol class="arabic simple">
+<li><p>it allows us to have both the <code class="docutils literal notranslate"><span class="pre">__getitem__</span></code> syntax and the call syntax on
+the same object</p></li>
+<li><p>it’s more convenient to have <code class="xref py py-meth docutils literal notranslate"><span class="pre">add_conversions()</span></code> as a
+method attched directly to the function, rather than it being somewhere
+totally separate</p></li>
+</ol>
+<p>Because of its global-stateful nature, we refer to <code class="xref py py-obj docutils literal notranslate"><span class="pre">to</span></code> as the knowledge
+source of data-layer types.  This means that all the dispatchers depend on it,
+and all dispatchers store a reference to themselves <em>in</em> <code class="xref py py-obj docutils literal notranslate"><span class="pre">to</span></code> so that they
+can be updated when new data types are added.</p>
+</div>
+<div class="section" id="efficiency-notes">
+<h2>Efficiency Notes<a class="headerlink" href="#efficiency-notes" title="Permalink to this headline">¶</a></h2>
+<p>We generally prefer to use more memory to make speed gains in the conversion
+(and dispatching) operations.  The amount of additional memory used is trivial
+for the number of types defined in the data layer, but any speed penalty must be
+paid on every single call.</p>
+<p>The entire <code class="xref py py-obj docutils literal notranslate"><span class="pre">to</span></code> object and all subsidiary
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">_converter</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">_partial_converter</span></code> objects are pickleable, and so
+can be sent across a pipe.</p>
+<p>The converters returned by single-key access (e.g. <code class="docutils literal notranslate"><span class="pre">data.to[data.Dense]</span></code>) are
+constructed individually on a call to <code class="docutils literal notranslate"><span class="pre">__getitem__</span></code>, and are instances of the
+private type <code class="xref py py-obj docutils literal notranslate"><span class="pre">qutip.core.data.convert._partial_converter</span></code>, which internally
+stores a reference to every “full” converter, and dispatches to the correct one
+when called.  There is no efficiency gain from using one of these objects, they
+are provided only for convenience.</p>
+<p>Internally, <code class="docutils literal notranslate"><span class="pre">to(to_type,</span> <span class="pre">data)</span></code> effectively calls <code class="docutils literal notranslate"><span class="pre">to[to_type,</span> <span class="pre">type(data)]</span></code>,
+so storing the object elides the creation of a single tuple and a dict lookup,
+but the cost of this is generally less than 100ns so it is generally not
+necessary to do it unless you will be making millions of calls to fast
+operations in a tight loop.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="dispatch.html" class="btn btn-neutral float-right" title="Dispatch Operations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="motivation.html" class="btn btn-neutral float-left" title="Motivation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, QuTiP developers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

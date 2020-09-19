@@ -1,0 +1,250 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Terminology &mdash; QuTiP Developers&#39; Guide 5.0.0alpha1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Motivation" href="motivation.html" />
+    <link rel="prev" title="Data Layer" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> QuTiP Developers' Guide
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                5.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">QuTiP Package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../development-environment.html">Creating a Development Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quantum-objects.html">Quantum Objects</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Data Layer</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Terminology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="motivation.html">Motivation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="type-conversion.html">Converting Between Types: <code class="docutils literal notranslate"><span class="pre">data.to</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dispatch.html">Dispatch Operations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="types.html">Type Descriptions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/index.html">Example Notebooks</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">QuTiP Developers' Guide</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">QuTiP Package</a> &raquo;</li>
+        
+          <li><a href="index.html">Data Layer</a> &raquo;</li>
+        
+      <li>Terminology</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/qutip/data-layer/terminology.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="terminology">
+<h1>Terminology<a class="headerlink" href="#terminology" title="Permalink to this headline">¶</a></h1>
+<p>This is a short terminology glossary for the data layer and operations on it.
+See the rest of the guide for more in depth information.</p>
+<dl class="simple">
+<dt>abstract type</dt><dd><p>An instance of a data-layer type, but we have no more information than that.
+If we knew exactly which type it was, we would have a <em>concrete type</em>.</p>
+</dd>
+<dt>concrete type</dt><dd><p>One particular type, for example <code class="xref py py-obj docutils literal notranslate"><span class="pre">CSR</span></code>.  The “opposite” of this is an
+<em>abstract type</em>.</p>
+</dd>
+<dt>conversion</dt><dd><p>A function which takes in one type and outputs another.  For example, a
+function <code class="docutils literal notranslate"><span class="pre">csr_from_dense(dense_matrix)</span></code> would be a <em>specialised</em>
+conversion, and a function <code class="docutils literal notranslate"><span class="pre">csr_from_anything(matrix)</span></code> would be a general
+or <em>abstract</em> conversion.</p>
+</dd>
+<dt>dispatcher</dt><dd><p>A instance of <code class="xref py py-obj docutils literal notranslate"><span class="pre">Dispatcher</span></code>.  This is a callable
+function that takes in <em>abstract</em> data-layer types and calls the closest
+<em>concrete specialisation</em> that it knows about after converting its inputs
+into the correct types.</p>
+</dd>
+<dt>specialisation</dt><dd><p>A defined function which takes in a particular, concrete set of data-layer
+types and returns another concrete data-layer type.  The user will typically
+never call these directly, they are only used directly within Cython code or
+indirectly from a dispatcher.</p>
+</dd>
+</dl>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="motivation.html" class="btn btn-neutral float-right" title="Motivation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Data Layer" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, QuTiP developers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

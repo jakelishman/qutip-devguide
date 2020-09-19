@@ -25,4 +25,4 @@ extend QuTiP, particularly the lower-level, more heavily optimised components.
 
    development-environment
    quantum-objects
-   data-layer
+   data-layer/index

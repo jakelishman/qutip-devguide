@@ -1,0 +1,319 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Motivation &mdash; QuTiP Developers&#39; Guide 5.0.0alpha1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Converting Between Types: data.to" href="type-conversion.html" />
+    <link rel="prev" title="Terminology" href="terminology.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> QuTiP Developers' Guide
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                5.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">QuTiP Package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../development-environment.html">Creating a Development Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quantum-objects.html">Quantum Objects</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Data Layer</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="terminology.html">Terminology</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Motivation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#why-not-just-use-numpy">Why Not Just Use NumPy?</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="type-conversion.html">Converting Between Types: <code class="docutils literal notranslate"><span class="pre">data.to</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dispatch.html">Dispatch Operations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="types.html">Type Descriptions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/index.html">Example Notebooks</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">QuTiP Developers' Guide</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">QuTiP Package</a> &raquo;</li>
+        
+          <li><a href="index.html">Data Layer</a> &raquo;</li>
+        
+      <li>Motivation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/qutip/data-layer/motivation.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="motivation">
+<h1>Motivation<a class="headerlink" href="#motivation" title="Permalink to this headline">¶</a></h1>
+<p>We always want to use a suitable data-storage format when representing operators
+and states, even if this is not always the <em>same</em> format.  Even if there are
+only two different formats, this poses a large problem for code duplication in
+the library; functions like <code class="xref py py-obj docutils literal notranslate"><span class="pre">add</span></code> and
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">matmul</span></code> take two inputs and return one output, giving
+eight different type specialisations that need to be written and maintained for
+full coverage, or every mathematical function turns into something nightmarish
+like</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+   <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">CSR</span><span class="p">):</span>
+      <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">CSR</span><span class="p">):</span>
+         <span class="k">if</span> <span class="n">out</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">CSR</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">add_csr</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
+         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">Dense</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">add_csr_csr_dense</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
+         <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span>
+      <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">Dense</span><span class="p">):</span>
+         <span class="c1"># ...</span>
+      <span class="c1"># ...</span>
+   <span class="c1"># ...</span>
+   <span class="k">else</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">TypeError</span>
+</pre></div>
+</div>
+<p>This is obviously completely unsustainable for even two different types, let
+alone more than that, and offers very little user customisation.</p>
+<p>Instead, we want a unified, centrally controlled system where the developer
+simply calls <code class="docutils literal notranslate"><span class="pre">add(left,</span> <span class="pre">right)</span></code>, and the correct specialisation is determined.</p>
+<div class="section" id="why-not-just-use-numpy">
+<h2>Why Not Just Use NumPy?<a class="headerlink" href="#why-not-just-use-numpy" title="Permalink to this headline">¶</a></h2>
+<p>NumPy is a fantastic tool for representing numerical data, but it is limited to
+dense matrices, while many operators in quantum mechanics are often much more
+suited to a sparse representation.</p>
+<p>For cases which <em>are</em> well-described by dense matrices, the data-layer type
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">Dense</span></code> is very similar to a NumPy array underneath (and
+in fact can be directly viewed as one using its
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">as_ndarray()</span></code> method), but is guaranteed to hold
+exactly two dimensions, of which one is stored contiguously.  These additional
+internal guarantees help speed in the tightest loops, and the type can be
+constructed very quickly from an <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code></a> that is already in the
+correct format.</p>
+<p>For the large number of cases where the underlying data is much sparser, we use
+the <code class="xref py py-obj docutils literal notranslate"><span class="pre">qutip.core.data.CSR</span></code> type, which is a form of compressed sparse row
+matrix very similar to SciPy’s <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html#scipy.sparse.csr_matrix" title="(in SciPy v1.5.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.sparse.csr_matrix</span></code></a>.  There are a few
+reasons for not wanting to use SciPy’s implementation:</p>
+<ol class="arabic simple">
+<li><p>Instantiation of <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html#scipy.sparse.csr_matrix" title="(in SciPy v1.5.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">csr_matrix</span></code></a> is very slow.</p></li>
+<li><p><a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html#scipy.sparse.csr_matrix" title="(in SciPy v1.5.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">csr_matrix</span></code></a> can use different types as integer indices
+in its index arrays, but this can make it more difficult to interface with C
+code underneath.</p></li>
+<li><p>QuTiP has many parts where very low-level C access is required, and having
+to always deal with Python types means that we must often hold the GIL and
+pay non-trivial overhead penalties when accessing Python attributes.</p></li>
+<li><p>We need to add enough specialised routines that it’s not such a big deal if
+we replicate some functionality as well.</p></li>
+</ol>
+<p>Older versions of QuTiP used to reduce these issues by using a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">fast_csr_matrix</span></code> type which derived from
+<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html#scipy.sparse.csr_matrix" title="(in SciPy v1.5.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">csr_matrix</span></code></a> and overrode its <code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code> method to
+remove the slow index-checking code and ensured that only data of the correct
+types was stored.  In C-level code, a secondary struct <code class="xref c c-struct docutils literal notranslate"><span class="pre">CSR_Matrix</span></code>
+was defined, which led to various parts of the code have several entry points,
+depending on how many of the arguments had been converted to the structure
+representation, and there was still a lot of overhead in converting back to
+Python-level code at the end.</p>
+<p>The new <code class="xref py py-obj docutils literal notranslate"><span class="pre">CSR</span></code> type stores data in conceptually the same
+manner as SciPy, but is defined purely at the Cython level.  This means that it
+pays almost no overhead when switching between Python and C access, and code
+working with the types need not hold the GIL.  Further, the internal storage
+makes similar guarantees to the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Dense</span></code> format about the
+data storage, simplifying mathematical code within QuTiP.  It can also be
+viewed as a SciPy object when it needs to be used from within Python.</p>
+<p>Previous versions of QuTiP also <em>only</em> supported the <code class="xref py py-class docutils literal notranslate"><span class="pre">fast_csr_matrix</span></code>
+type as the backing data store.  There are many cases where this is a deeply
+unsuitable type: in small systems, sparse matrices require large overheads and
+stymie data caching, while even in large systems many operations produce
+outputs which are nearly 100% dense such as time-evolution operators and matrix
+exponentials.  For optimal control applications, the majority of the time spent
+was just in dealing with the sparse overheads.  Allowing multiple types to
+represent data lets us use the right tool for each job, but it does mean that
+further care is taken to ensure that all the mathematical parts of the library
+can function without needing to produce an exponential number of new
+mathematical functions whenever a type or new operation is added.</p>
+<p>Further, even if we were to use NumPy and SciPy objects, we would still be
+faced with the problem of handling multiple dispatch.  As soon as QuTiP needed
+to add any new functionality that was not already a function in
+<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/sparse.html#module-scipy.sparse" title="(in SciPy v1.5.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.sparse</span></code></a> or <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/linalg.html#module-scipy.linalg" title="(in SciPy v1.5.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.linalg</span></code></a>, particularly one that takes two
+matrices as arguments, we would have had to implement the same dispatch system
+anyway.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="type-conversion.html" class="btn btn-neutral float-right" title="Converting Between Types: data.to" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="terminology.html" class="btn btn-neutral float-left" title="Terminology" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, QuTiP developers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
