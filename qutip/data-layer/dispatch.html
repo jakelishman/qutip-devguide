@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Dispatch Operations &mdash; QuTiP Developers&#39; Guide 5.0.0alpha1 documentation</title>
+  <title>Dispatch Operations: Dispatcher &mdash; QuTiP Developers&#39; Guide 5.0.0alpha1 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Type Descriptions" href="types.html" />
-    <link rel="prev" title="Converting Between Types: data.to" href="type-conversion.html" /> 
+    <link rel="prev" title="Converting Between Types: to" href="type-conversion.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -92,8 +92,18 @@
 <li class="toctree-l2 current"><a class="reference internal" href="index.html">Data Layer</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="terminology.html">Terminology</a></li>
 <li class="toctree-l3"><a class="reference internal" href="motivation.html">Motivation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="type-conversion.html">Converting Between Types: <code class="docutils literal notranslate"><span class="pre">data.to</span></code></a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Dispatch Operations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="type-conversion.html">Converting Between Types: <code class="xref py py-obj docutils literal notranslate"><span class="pre">to</span></code></a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Dispatch Operations: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Dispatcher</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#basic-usage">Basic Usage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#adding-new-specialisations">Adding New Specialisations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#adding-new-types">Adding New Types</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#creating-a-new-dispatcher">Creating a New Dispatcher</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#other-features">Other Features</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-it-works">How It Works</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#implementation-details">Implementation Details</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#efficiency-notes">Efficiency Notes</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="types.html">Type Descriptions</a></li>
 </ul>
 </li>
@@ -150,7 +160,7 @@
         
           <li><a href="index.html">Data Layer</a> &raquo;</li>
         
-      <li>Dispatch Operations</li>
+      <li>Dispatch Operations: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Dispatcher</span></code></li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -169,12 +179,301 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="dispatch-operations">
-<h1>Dispatch Operations<a class="headerlink" href="#dispatch-operations" title="Permalink to this headline">¶</a></h1>
-<div class="admonition-todo admonition" id="id1">
-<p class="admonition-title">Todo</p>
-<p>Still to write this section, in particular there’s still some design parts
-that need to be ironed out.</p>
+  <div class="section" id="dispatch-operations-dispatcher">
+<h1>Dispatch Operations: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Dispatcher</span></code><a class="headerlink" href="#dispatch-operations-dispatcher" title="Permalink to this headline">¶</a></h1>
+<p>The user most commonly interacts with the data layer by calling mathematical
+operations on <code class="xref py py-obj docutils literal notranslate"><span class="pre">Qobj</span></code> instances, which verify that the operation makes
+mathematical sense (e.g. the Hilbert space dimensions are equal) and then call
+the data-layer dispatchers to handle the particular storage formats in use.</p>
+<p>The multiple-dispatch system implemented by <code class="xref py py-obj docutils literal notranslate"><span class="pre">Dispatcher</span></code> lets all
+mathematical operations in QuTiP use every possible combination of concrete
+input types, even if no developer or user actually wrote a function for that
+specific combination.</p>
+<p>A basic example of adding two matrices together, and controlling the output type
+using the dispatch mechanism:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">scipy.sparse</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">CSR</span><span class="p">(</span><span class="n">scipy</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">csr_matrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+<span class="go">Dense(shape=(5, 5), fortran=True)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">CSR</span><span class="p">)</span>
+<span class="go">CSR(shape=(5, 5), nnz=25)</span>
+</pre></div>
+</div>
+<p>Using key-lookup syntax to get a callable object which says whether it is a
+concrete, “built-in” function (direct) or an ersatz one formed by converting the
+inputs and outputs with <code class="xref py py-obj docutils literal notranslate"><span class="pre">to</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="o">.</span><span class="n">add</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">CSR</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">Dense</span><span class="p">]</span>
+<span class="go">&lt;indirect specialisation (CSR, Dense, Dense) of add&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="o">.</span><span class="n">add</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">CSR</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">CSR</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">CSR</span><span class="p">]</span>
+<span class="go">&lt;direct specialisation (CSR, CSR, CSR) of add&gt;</span>
+</pre></div>
+</div>
+<div class="section" id="basic-usage">
+<h2>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h2>
+<p>A <code class="xref py py-obj docutils literal notranslate"><span class="pre">Dispatcher</span></code> provides a single mathematical function for <em>all</em>
+combinations of types known by <code class="xref py py-obj docutils literal notranslate"><span class="pre">to</span></code>, regardless of whether
+the particular specialisation has been defined for the input data types.  In the
+first example above, the operator <code class="xref py py-obj docutils literal notranslate"><span class="pre">add</span></code> currently only
+knows two specialisations; it knows how to add <code class="docutils literal notranslate"><span class="pre">CSR</span> <span class="pre">+</span> <span class="pre">CSR</span> <span class="pre">-&gt;</span> <span class="pre">CSR</span></code> and <code class="docutils literal notranslate"><span class="pre">Dense</span>
+<span class="pre">+</span> <span class="pre">Dense</span> <span class="pre">-&gt;</span> <span class="pre">Dense</span></code> directly, but it is still able to produce the correct result
+when asked to do <code class="docutils literal notranslate"><span class="pre">CSR</span> <span class="pre">+</span> <span class="pre">Dense</span> <span class="pre">-&gt;</span> <span class="pre">CSR</span></code> and similar.  The type of the output can
+be, but does not need to be, specified.  The <code class="xref py py-obj docutils literal notranslate"><span class="pre">Dispatcher</span></code>
+will choose a suitable output type if one is not given.</p>
+<p>For example, the objects <code class="xref py py-obj docutils literal notranslate"><span class="pre">qutip.data.add</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">qutip.data.pow</span></code> and
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">qutip.data.matmul</span></code> are some examples of dispatchers in the data layer.
+Respectively, these have the signatures</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">left</span><span class="p">:</span> <span class="n">Data</span><span class="p">,</span> <span class="n">right</span><span class="p">:</span> <span class="n">Data</span><span class="p">,</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">complex</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span>
+<span class="n">data</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">matrix</span><span class="p">:</span> <span class="n">Data</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="n">integer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span>
+<span class="n">data</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">left</span><span class="p">:</span> <span class="n">Data</span><span class="p">,</span> <span class="n">right</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span>
+</pre></div>
+</div>
+<p>These are callable functions, so the base use is to call them.</p>
+<p>Just like <code class="xref py py-obj docutils literal notranslate"><span class="pre">to</span></code>, key-lookup syntax can be used to get a single callable
+object representing a single specialisation.  The callable object has an
+attribute <code class="docutils literal notranslate"><span class="pre">direct</span></code> which is <code class="docutils literal notranslate"><span class="pre">True</span></code> if no type conversions would need to take
+place, and <code class="docutils literal notranslate"><span class="pre">False</span></code> is at least one would have to happen.  Just like in the
+regular call, you can either specify or not specify the type of the output, but
+the types of the inputs must always be given.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="o">.</span><span class="n">pow</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">CSR</span><span class="p">]</span>
+<span class="go">&lt;direct specialisation (CSR, CSR) of pow&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="o">.</span><span class="n">pow</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">CSR</span><span class="p">]</span><span class="o">.</span><span class="n">direct</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="o">.</span><span class="n">pow</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">CSR</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">Dense</span><span class="p">]</span><span class="o">.</span><span class="n">direct</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>The returned object is callable with the same signature as the dispatcher
+(except the <code class="docutils literal notranslate"><span class="pre">out</span></code> keyword argument is no longer there), and requires that the
+inputs match the types stated.</p>
+</div>
+<div class="section" id="adding-new-specialisations">
+<h2>Adding New Specialisations<a class="headerlink" href="#adding-new-specialisations" title="Permalink to this headline">¶</a></h2>
+<p>New specialisations can be added to a pre-existing dispatcher with the
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">qutip.data.Dispatcher.add_specialisations()</span></code> method.  This is very similar
+in form to <code class="xref py py-meth docutils literal notranslate"><span class="pre">qutip.data.to.add_conversions()</span></code>; it takes lists of tuples,
+where the first elements of the tuple define the types in the specialisation,
+and the last is the specialised function itself.</p>
+<p>For example, a user might need to multiply <code class="docutils literal notranslate"><span class="pre">Dense</span> <span class="pre">&#64;</span> <span class="pre">CSR</span></code> frequently and get a
+<code class="docutils literal notranslate"><span class="pre">Dense</span></code> output.  Currently, there is no direct specialisation for this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="o">.</span><span class="n">matmul</span><span class="p">[</span><span class="n">Dense</span><span class="p">,</span> <span class="n">CSR</span><span class="p">,</span> <span class="n">Dense</span><span class="p">]</span>
+<span class="go">&lt;indirect specialisation (Dense, CSR, Dense) of matmul&gt;</span>
+</pre></div>
+</div>
+<p>The user may then choose to define their own specialisation to handle this case
+efficiently:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">matmul_1</span><span class="p">(</span><span class="n">left</span><span class="p">:</span> <span class="n">Dense</span><span class="p">,</span> <span class="n">right</span><span class="p">:</span> <span class="n">CSR</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dense</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="c1"># [...]</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">out</span>
+</pre></div>
+</div>
+<p>They would give this to <code class="xref py py-obj docutils literal notranslate"><span class="pre">matmul</span></code> by calling</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="o">.</span><span class="n">matmul</span><span class="o">.</span><span class="n">add_specialisations</span><span class="p">([</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">Dense</span><span class="p">,</span> <span class="n">CSR</span><span class="p">,</span> <span class="n">Dense</span><span class="p">,</span> <span class="n">matmul_1</span><span class="p">),</span>
+<span class="gp">... </span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Now we find</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="o">.</span><span class="n">matmul</span><span class="p">[</span><span class="n">Dense</span><span class="p">,</span> <span class="n">CSR</span><span class="p">,</span> <span class="n">Dense</span><span class="p">]</span>
+<span class="go">&lt;direct specialisation (Dense, CSR, Dense) of matmul&gt;</span>
+</pre></div>
+</div>
+<p>Additionally, the whole lookup table will be rebuilt taking this new
+specialisation into account, which means the indirect specialisation
+<code class="docutils literal notranslate"><span class="pre">matmul(Dense,</span> <span class="pre">CSR)</span> <span class="pre">-&gt;</span> <span class="pre">CSR</span></code> will now make use of this new method, because it
+has a low conversion weight.</p>
+</div>
+<div class="section" id="adding-new-types">
+<h2>Adding New Types<a class="headerlink" href="#adding-new-types" title="Permalink to this headline">¶</a></h2>
+<p>Now let’s say the user wants to add a new <code class="docutils literal notranslate"><span class="pre">NewDataType</span></code> type all across QuTiP.
+The only action they <em>must</em> take is to tell <code class="xref py py-obj docutils literal notranslate"><span class="pre">qutip.data.to</span></code> about this new
+type.  Let’s say they define it like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">NewDataType</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="c1"># [...]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">new_from_dense</span><span class="p">(</span><span class="n">matrix</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">Dense</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NewDataType</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="c1"># [...]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">dense_from_new</span><span class="p">(</span><span class="n">matrix</span><span class="p">:</span> <span class="n">NewDataType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">data</span><span class="o">.</span><span class="n">Dense</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="c1"># [...]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="o">.</span><span class="n">to</span><span class="o">.</span><span class="n">add_conversions</span><span class="p">([</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">NewDataType</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">Dense</span><span class="p">,</span> <span class="n">new_from_dense</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">Dense</span><span class="p">,</span> <span class="n">NewDataType</span><span class="p">,</span> <span class="n">dense_from_new</span><span class="p">),</span>
+<span class="gp">... </span><span class="p">])</span>
+</pre></div>
+</div>
+<p>As we saw in the previous section, this is enough to define conversions between
+all pairs of types.  What’s more, this is <em>also</em> enough to define all operations
+in the data layer as well:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="o">.</span><span class="n">matmul</span><span class="p">[</span><span class="n">NewDataType</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">CSR</span><span class="p">]</span>
+<span class="go">&lt;indirect specialisation (NewDataType, CSR, CSR) of matmul&gt;</span>
+</pre></div>
+</div>
+<p>All of the data layer will now work seamlessly with the new type, even though
+this is actually achieved by conversion to and from a known data type.  There
+was no need to call anything other than <code class="xref py py-meth docutils literal notranslate"><span class="pre">qutip.data.to.add_conversions()</span></code>.
+Internally, this is achieved by <code class="xref py py-meth docutils literal notranslate"><span class="pre">qutip.data.Dispatcher.__init__()</span></code> storing a
+reference to itself in <code class="xref py py-obj docutils literal notranslate"><span class="pre">to</span></code>, and <code class="xref py py-obj docutils literal notranslate"><span class="pre">to</span></code> calling
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">rebuild_lookup()</span></code> as part of
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">add_conversions()</span></code>.</p>
+<p>Now the user only needs to add in the specialisations that they actually need
+for the bottle-neck parts of their application, and leave the dispatcher to
+handle all other minor components by automatic conversion.  As in the previous
+subsection, they do this by calling
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">add_specialisations()</span></code> on the relevant operations.</p>
+</div>
+<div class="section" id="creating-a-new-dispatcher">
+<h2>Creating a New Dispatcher<a class="headerlink" href="#creating-a-new-dispatcher" title="Permalink to this headline">¶</a></h2>
+<p>In most user-defined functions which operate on <code class="xref py py-attr docutils literal notranslate"><span class="pre">qutip.Qobj.data</span></code> it will
+be completely sufficient for them to simply call
+<code class="docutils literal notranslate"><span class="pre">data.to(desired_type,</span> <span class="pre">input_data)</span></code> on entry to the function, and then they
+can guarantee that they are always working with the type of data they support.</p>
+<p>However, in some cases they may want to support dispatched operations in the
+same way that we do within the library code.  For this reason, the data layer
+exports <code class="xref py py-obj docutils literal notranslate"><span class="pre">Dispatcher</span></code> as a public symbol.  The minimal amount of
+work that needs to be done is to call the initialiser, and then call
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">add_specialisations()</span></code>.  For example, let’s say the
+user has defined two specialisations for their simple new function
+<code class="docutils literal notranslate"><span class="pre">add_square</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">add_square_csr</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">add_csr</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">matmul_csr</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">right</span><span class="p">))</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">add_square_dense</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">add_dense</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">matmul_dense</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">right</span><span class="p">))</span>
+<span class="gp">...</span>
+</pre></div>
+</div>
+<p>(Ignore for now that this would be better achieved by just using the dispatchers
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">add</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">matmul</span></code> directly.)  Now they create
+the dispatcher simply by doing</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">add_square</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">Dispatcher</span><span class="p">(</span><span class="n">add_square_csr</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;add_square&#39;</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">add_square</span><span class="o">.</span><span class="n">add_specialisations</span><span class="p">([</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">CSR</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">CSR</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">CSR</span><span class="p">,</span> <span class="n">add_square_csr</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">Dense</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">Dense</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">Dense</span><span class="p">,</span> <span class="n">add_square_dense</span><span class="p">),</span>
+<span class="gp">... </span><span class="p">])</span>
+</pre></div>
+</div>
+<p>This is enough for <code class="xref py py-obj docutils literal notranslate"><span class="pre">Dispatcher</span></code> to have extracted the signature
+and satisfied all of the specialisations.  Note that the <code class="docutils literal notranslate"><span class="pre">inputs</span></code> argument
+does not provide the signature, it tells the dispatcher which arguments are
+data-layer types it should dispatch on, e.g. for <code class="xref py py-obj docutils literal notranslate"><span class="pre">pow</span></code> as
+defined above <code class="docutils literal notranslate"><span class="pre">inputs</span> <span class="pre">=</span> <span class="pre">('matrix',)</span></code>, but the signature is
+<code class="docutils literal notranslate"><span class="pre">(matrix,</span> <span class="pre">n)</span> <span class="pre">-&gt;</span> <span class="pre">out</span></code>.  See that the specialisations are now complete:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">add_square</span>
+<span class="go">&lt;dispatcher: add_square(left, right)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">add_square</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">Dense</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">CSR</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">CSR</span><span class="p">]</span>
+<span class="go">&lt;indirect specialisation (Dense, CSR, CSR) of add_square&gt;</span>
+</pre></div>
+</div>
+<p>In the initialisation, the function <code class="docutils literal notranslate"><span class="pre">add_square_csr</span></code> is passed as an example
+from which <code class="xref py py-obj docutils literal notranslate"><span class="pre">Dispatcher</span></code> extracts the call signature, the module
+name and the docstring (if it exists).  It is not actually added as a
+specialisation until <code class="docutils literal notranslate"><span class="pre">add_square.add_specialisations</span></code> is called afterwards.</p>
+<p>If desired, the user can set or override the docstring for the resulting
+dispatcher by directly writing to the <code class="docutils literal notranslate"><span class="pre">__doc__</span></code> attribute of the object.  We
+<em>always</em> do this within the library.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Within the Cython components of the library, we manually construct the
+signature and pass it into the <code class="xref py py-obj docutils literal notranslate"><span class="pre">qutip.data.Dispatcher</span></code> constructor
+because Cython-compiled functions do not embed their signature in a manner in
+which <a class="reference external" href="https://docs.python.org/3/library/inspect.html#inspect.signature" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inspect.signature</span></code></a> can extract it (even with the
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">cython.embedsignature</span></code> directive).  We also use this to cut out some
+arguments in the call signatures which would not work with the dispatch
+mechanism (like <code class="docutils literal notranslate"><span class="pre">out</span></code> parameters).</p>
+</div>
+</div>
+<div class="section" id="other-features">
+<h2>Other Features<a class="headerlink" href="#other-features" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">Dispatcher</span></code> can operate on a function with any call
+signature (except ones which use <code class="docutils literal notranslate"><span class="pre">*args</span></code> or <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code>), even if not all of
+the arguments are data-layer types.  At definition, the creator of the
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">Dispatcher</span></code> says which input arguments are meant to be
+dispatched on, and whether the output should be dispatched on, and all other
+arguments are passed through like normal.</p>
+</div>
+<div class="section" id="how-it-works">
+<h2>How It Works<a class="headerlink" href="#how-it-works" title="Permalink to this headline">¶</a></h2>
+<p>Calling a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Dispatcher</span></code> happens in five stages:</p>
+<ol class="arabic simple">
+<li><p>bind parameters to the call signature</p></li>
+<li><p>resolve all dispatch rules into the best known specialisation</p></li>
+<li><p>convert dispatch parameters to match the chosen specialisation</p></li>
+<li><p>call the specialisation</p></li>
+<li><p>if necessary, convert the output to the correct type</p></li>
+</ol>
+<p>First, the arguments have to be bound from the generic signature <code class="docutils literal notranslate"><span class="pre">(*args,</span>
+<span class="pre">**kwargs)</span></code> to match the actual call signature of the underlying functions so
+that the arguments which need dispatching are identified.  This is done by the
+internal class <code class="xref py py-obj docutils literal notranslate"><span class="pre">_bind</span></code>, which is constructed from the
+signature of the specialisations when the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Dispatcher</span></code> is
+instantiated.</p>
+<p>Once we have the arguments, we have to resolve all the dispatch rules to know
+which specialisation we should use.  In the most common scenario, the only
+active dispatch rules will be either <em>global</em> rules defined in the QuTiP
+options, or <em>instance</em> rules defined on this particular
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">Dispatcher</span></code>—there will not be any <em>local</em> rules passed in
+the function call.  If this is the case, the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Dispatcher</span></code> will
+already have a pre-built lookup table, and choosing the correct specialisation
+is simply a hash lookup on the types.  This is linear complexity in the number
+of types dispatched on, whereas the naïve <code class="docutils literal notranslate"><span class="pre">if/elif/else</span></code> structure would go as
+<span class="math notranslate nohighlight">\(\mathcal O(n^m)\)</span>, where <span class="math notranslate nohighlight">\(n\)</span> is the number of known
+data-layer types, and <span class="math notranslate nohighlight">\(m\)</span> is the number of dispatch parameters.</p>
+<p>The next most common case would be that the only local rule is to fix the output
+type.  In this case, the secondary lookup table is used to avoid having to
+compute a proper set of weights.</p>
+<p>The final case for resolving rules is the most general one: we have been given
+some proper dispatch rules that we have to handle at call time to resolve which
+specialisation we must choose.  Here, we have no choice but to recalculate the
+correct specialisation, which comes with some (hopefully small) runtime cost.</p>
+<p>The last three steps of the dispatch operation are simple.  Now that we have the
+specialisation we are going to use, we simply use <code class="xref py py-obj docutils literal notranslate"><span class="pre">to</span></code> to
+convert the given inputs to the correct types, we call the function, and we
+return the answer (possible converting it too).</p>
+<p>Building the lookup table is a relatively simple process, but asymptotically
+it has very poor complexity.  This is why as much as possible is done ahead of
+time, at library initialisation or when a new type is added.  To build the
+tables, we have to compare every possible set of inputs to every known
+specialisation, and then choose the specialisation which has the least “weight”
+given the defined rules.</p>
+</div>
+<div class="section" id="implementation-details">
+<h2>Implementation Details<a class="headerlink" href="#implementation-details" title="Permalink to this headline">¶</a></h2>
+<p>The backing specialisations can be found in
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">qutip.Dispatcher._specialisations</span></code>, and the complete lookup table is in
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">qutip.Dispatcher._lookup</span></code>.  These are marked as private, because messing
+around with them will almost certainly cause the dispatcher to stop working.</p>
+<p>Only one specialisation needs to be defined for a dispatcher to work with <em>all</em>
+data types known by <code class="xref py py-obj docutils literal notranslate"><span class="pre">to</span></code>.  We achieve this because
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">to</span></code> guarantees that all possible conversions between data
+types will exist, so <code class="xref py py-obj docutils literal notranslate"><span class="pre">Dispatcher</span></code> can always convert its inputs
+into those which will match one of its known specialisations.</p>
+<p>Within the initialisation of the data layer, we use a “magic” <code class="docutils literal notranslate"><span class="pre">_defer</span></code> keyword
+argument to <code class="xref py py-meth docutils literal notranslate"><span class="pre">add_specialisations()</span></code> to break a
+circular dependency.  This is because the “type” modules <code class="xref py py-obj docutils literal notranslate"><span class="pre">qutip.data.csr</span></code>
+and <code class="xref py py-obj docutils literal notranslate"><span class="pre">qutip.data.dense</span></code> depend on some mathematical modules (e.g.
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">add</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">matmul</span></code>) to provide the <code class="docutils literal notranslate"><span class="pre">__add__</span></code>
+and similar methods on the types.  For ease of development we want the
+dispatchers to be defined in the same modules that all the specialisations are
+(though this is not at all necessary), but the dispatchers require
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">to</span></code> to be populated with the types before specialisations can
+be added.  The <code class="docutils literal notranslate"><span class="pre">_defer</span></code> keyword here just defers the building of the lookup
+table until an explicit call to <code class="xref py py-meth docutils literal notranslate"><span class="pre">rebuild_lookup()</span></code>,
+breaking the cycle.  The user will never need to do this, because by the time
+they receive the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Dispatcher</span></code> object, <code class="xref py py-obj docutils literal notranslate"><span class="pre">to</span></code> is
+already initialised to a minimum degree.</p>
+</div>
+<div class="section" id="efficiency-notes">
+<h2>Efficiency Notes<a class="headerlink" href="#efficiency-notes" title="Permalink to this headline">¶</a></h2>
+<p>The specialisations returned by the <code class="docutils literal notranslate"><span class="pre">__getitem__</span></code> lookups are not
+significantly faster than just calling the dispatcher directly, because the bulk
+of the heavy lifting is done when
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">add_specialisations()</span></code> or
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">rebuild_lookup()</span></code> is called.  On call, the generic
+signature <code class="docutils literal notranslate"><span class="pre">(*args,</span> <span class="pre">**kwargs)</span></code> has to be bound to the actual signature of the
+underlying operation, regardless of whether the specialisation has already been
+found.  At the Cython level there is short-circuit access to the call machinery
+in the specialisations themselves, but this cannot be safely exposed outside of
+the <code class="xref py py-obj docutils literal notranslate"><span class="pre">qutip.data.Dispatcher</span></code> class.</p>
 </div>
 </div>
 
@@ -189,7 +488,7 @@ that need to be ironed out.</p>
         <a href="types.html" class="btn btn-neutral float-right" title="Type Descriptions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="type-conversion.html" class="btn btn-neutral float-left" title="Converting Between Types: data.to" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="type-conversion.html" class="btn btn-neutral float-left" title="Converting Between Types: to" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
